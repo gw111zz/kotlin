@@ -783,9 +783,45 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
+        @TestMetadata("test19.kt")
+        public void testTest19() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test19.kt");
+        }
+
+        @Test
         @TestMetadata("test2.kt")
         public void testTest2() throws Exception {
             runTest("native/native.tests/testData/codegen/bridges/test2.kt");
+        }
+
+        @Test
+        @TestMetadata("test20.kt")
+        public void testTest20() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test20.kt");
+        }
+
+        @Test
+        @TestMetadata("test21.kt")
+        public void testTest21() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test21.kt");
+        }
+
+        @Test
+        @TestMetadata("test22.kt")
+        public void testTest22() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test22.kt");
+        }
+
+        @Test
+        @TestMetadata("test23.kt")
+        public void testTest23() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test23.kt");
+        }
+
+        @Test
+        @TestMetadata("test24.kt")
+        public void testTest24() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test24.kt");
         }
 
         @Test
