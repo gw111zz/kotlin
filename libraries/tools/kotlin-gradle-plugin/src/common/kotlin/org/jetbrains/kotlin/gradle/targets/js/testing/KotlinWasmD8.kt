@@ -28,14 +28,14 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
     @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
     @Transient
+    private val npmProject = compilation.npmProject
+    @Transient
     private val project: Project = compilation.target.project
 
     private val d8 = D8RootPlugin.apply(project.rootProject)
     private val d8Executable by project.provider { d8.requireConfigured().executable }
-    private val npmProjectDir by project.provider { compilation.npmProject.dir }
 
-    override val workingDir: Provider<Directory>
-        get() = npmProjectDir
+    override val workingDir: Provider<Directory> = npmProject.dir
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -43,10 +43,11 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
+        val compiledFile = task.inputFileProperty.get().asFile
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile, compiledFile)
 
         forkOptions.executable = d8Executable
-        forkOptions.workingDir = testRunnerFile.parentFile
+        forkOptions.workingDir = compiledFile.parentFile
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,

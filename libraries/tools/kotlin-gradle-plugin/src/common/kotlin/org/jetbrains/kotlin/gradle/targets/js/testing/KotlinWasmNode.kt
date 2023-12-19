@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
-import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
-import java.nio.file.Path
 
 internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJsTestFramework {
     override val settingsState: String = "KotlinWasmNode"
+
     @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
@@ -37,24 +35,24 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
     private val projectLayout = project.layout
 
-    private val npmProjectDir by project.provider { compilation.npmProject.dir }
+    @Transient
+    private val npmProject = compilation.npmProject
 
     private val wasmTargetType: KotlinWasmTargetType? = target.wasmTargetType
 
-    override val workingDir: Provider<Directory>
-        get() = if (wasmTargetType != KotlinWasmTargetType.WASI) {
-            npmProjectDir
-        } else {
-            projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
-        }
+    override val workingDir: Provider<Directory> = if (wasmTargetType != KotlinWasmTargetType.WASI) {
+        npmProject.dir
+    } else {
+        projectLayout.dir(kotlinJsTest.inputFileProperty.asFile.map { it.parentFile })
+    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
         nodeJsArgs: MutableList<String>,
-        debug: Boolean
+        debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val testRunnerFile = writeWasmUnitTestRunner(task.inputFileProperty.get().asFile)
+        val testRunnerFile = writeWasmUnitTestRunner(workingDir.get().asFile.parentFile, task.inputFileProperty.get().asFile)
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
