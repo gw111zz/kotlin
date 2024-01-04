@@ -49,6 +49,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         context.ir.symbols,
         context.irBuiltIns
 ) {
+    private val insertSafeCasts = context.config.genericSafeCasts
 
     // TODO: should we handle the cases when expression type
     // is not equal to e.g. called function return type?
@@ -167,7 +168,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
             else {
                 val expectedClass = expectedType.classOrNull?.owner
-                if (!skipTypeCheck
+                if (insertSafeCasts && !skipTypeCheck
                         && actualTypeIsGeneric
                         && expectedClass != null
                         && !expectedClass.isNothing()
@@ -192,7 +193,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 return it
             }
             val parameter = conversion.owner.valueParameters.single()
-            val argument = if (!skipTypeCheck && expectedType.isInlinedNative())
+            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
                 this.checkedCast(actualType, conversion.owner.returnType)
             else this.uncheckedCast(parameter.type)
 
