@@ -165,6 +165,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
     val valuesToPass = args + if (functionIsPassedAsLastParameter) listOf(function.asCallback()) else emptyList()
     val outlinedType = LlvmFunctionSignature(
             signature.returnType,
+            signature.returnsObjectType,
             signature.parameterTypes + if (functionIsPassedAsLastParameter) listOf(LlvmParamType(pointerType(function.functionType))) else emptyList(),
             functionAttributes = listOf(LlvmFunctionAttribute.NoInline)
     )
@@ -177,7 +178,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
         forbidRuntime = true // Don't emit safe points, frame management etc.
 
         val actualArgs = signature.parameterTypes.indices.map { param(it) }
-        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(signature.llvmFunctionType, param(signature.parameterTypes.size), signature) else function
+        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(signature.llvmFunctionType, function.returnsObjectType, param(signature.parameterTypes.size), signature) else function
 
         // Use LLVMBuildCall instead of call, because the latter enforces using exception handler, which is exactly what we have to avoid.
         val result = actualCallable.buildCall(builder, actualArgs).let { callResult ->
@@ -209,20 +210,6 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
 
     fun dispose() {
         rttiGenerator.dispose()
-    }
-
-    fun ObjCExportFunctionGenerationContext.callFromBridge(
-            llvmFunction: LLVMValueRef,
-            args: List<LLVMValueRef>,
-            resultLifetime: Lifetime = Lifetime.IRRELEVANT
-    ): LLVMValueRef {
-        val llvmDeclarations = LlvmCallable(
-                getGlobalFunctionType(llvmFunction),
-                // llvmFunction could be a function pointer here, and we can't infer attributes from it.
-                llvmFunction,
-                LlvmFunctionAttributeProvider.makeEmpty()
-        )
-        return callFromBridge(llvmDeclarations, args, resultLifetime)
     }
 
     fun ObjCExportFunctionGenerationContext.callFromBridge(
@@ -318,6 +305,7 @@ internal class ObjCExportCodeGenerator(
 
         val objcMsgSendType = LlvmFunctionSignature(
                 returnType,
+                false,
                 listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)) + parameterTypes
         )
         return callFromBridge(msgSender(objcMsgSendType), listOf(receiver, genSelector(selector)) + args)
@@ -549,7 +537,7 @@ internal class ObjCExportCodeGenerator(
     )
 
     private fun emitSelectorsHolder() {
-        val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+        val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType), false).toProto(
                 name = "",
                 origin = null,
                 linkage = LLVMLinkage.LLVMInternalLinkage
@@ -712,7 +700,7 @@ private fun ObjCExportCodeGeneratorBase.buildWritableTypeInfoValue(
 }
 
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
-    get() = LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), listOf(LlvmParamType(codegen.kObjHeaderPtr)), isVararg = false)
+    get() = LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), false, listOf(LlvmParamType(codegen.kObjHeaderPtr)), isVararg = false)
 
 private val ObjCExportCodeGeneratorBase.objCToKotlinFunctionType: LLVMTypeRef
     get() = functionType(codegen.kObjHeaderPtr, false, llvm.int8PtrType, codegen.kObjHeaderPtrPtr)
@@ -1229,7 +1217,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                     error("Method is not instance and thus can't have bridge for overriding: $baseMethod")
 
                 MethodBridgeValueParameter.ErrorOutParameter ->
-                    alloca(llvm.int8PtrType).also {
+                    alloca(llvm.int8PtrType, false).also {
                         store(llvm.kNullInt8Ptr, it)
                         errorOutPtr = it
                     }
@@ -1909,7 +1897,7 @@ private fun ObjCExportCodeGenerator.createThrowableAsErrorAdapter(): ObjCExportC
 private fun objCFunctionType(generationState: NativeGenerationState, methodBridge: MethodBridge): LlvmFunctionSignature {
     val paramTypes = methodBridge.paramBridges.map { it.toLlvmParamType(generationState.llvm) }
     val returnType = methodBridge.returnBridge.toLlvmRetType(generationState)
-    return LlvmFunctionSignature(returnType, paramTypes, isVararg = false)
+    return LlvmFunctionSignature(returnType, false, paramTypes, isVararg = false)
 }
 
 private fun ObjCValueType.toLlvmType(llvm: CodegenLlvmHelpers): LLVMTypeRef = when (this) {
