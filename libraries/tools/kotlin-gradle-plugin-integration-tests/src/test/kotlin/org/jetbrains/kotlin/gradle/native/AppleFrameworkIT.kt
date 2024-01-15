@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
@@ -573,6 +574,20 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
                 assertOutputDoesNotContain("mainStaticReleaseFrameworkIos")
+            }
+        }
+    }
+
+    // Should always be green because the CI Xcode version must be supported
+    @DisplayName("Xcode version too high diagnostic isn't emitted")
+    @GradleTest
+    fun testXcodeVersionTooHighDiagnosticNotEmitted(gradleVersion: GradleVersion) {
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+        ) {
+            build("checkKotlinGradlePluginConfigurationErrors") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.XcodeVersionTooHighWarning)
             }
         }
     }
