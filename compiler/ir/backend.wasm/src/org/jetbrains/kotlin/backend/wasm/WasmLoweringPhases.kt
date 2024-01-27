@@ -671,6 +671,8 @@ val loweringList = listOf(
 
     wasmStringSwitchOptimizerLowering,
 
+    associatedObjectsLowering,
+
     complexExternalDeclarationsToTopLevelFunctionsLowering,
     complexExternalDeclarationsUsagesLowering,
 
@@ -716,8 +718,6 @@ val loweringList = listOf(
     expressionBodyTransformer,
     eraseVirtualDispatchReceiverParametersTypes,
     bridgesConstructionPhase,
-
-    associatedObjectsLowering,
 
     objectDeclarationLoweringPhase,
     genericReturnTypeLowering,
