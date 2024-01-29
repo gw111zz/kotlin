@@ -174,7 +174,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                         && !expectedClass.isNothing()
                         && actualType.getInlinedClassNative() == null
                         && !expectedClass.isObjCForwardDeclaration()
-                        && !expectedClass.isObjCMetaClass()
+                        && !expectedClass.isObjCMetaClass() // See KT-65260 for details.
                 ) {
                     this.checkedCast(actualType, expectedType)
                             .uncheckedCast(this.type) // Try not to bring new type incompatibilities.
