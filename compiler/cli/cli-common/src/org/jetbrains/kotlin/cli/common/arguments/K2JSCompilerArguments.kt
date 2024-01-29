@@ -694,7 +694,7 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
         collector.deprecationWarn(irBaseClassInMetadata, false, "-Xir-base-class-in-metadata")
         collector.deprecationWarn(irNewIr2Js, true, "-Xir-new-ir2js")
 
-        if (irPerFile && (moduleKind != MODULE_ES || target != ES_2015)) {
+        if (irPerFile && (moduleKind != MODULE_ES && target != ES_2015)) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
                 "Per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)"
