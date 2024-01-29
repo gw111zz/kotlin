@@ -100,7 +100,7 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
     }
 }
 internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
-
+    private val insertSafeCasts = context.config.genericSafeCasts
     val symbols = context.ir.symbols
     lateinit var runtimeJobFunction: IrSimpleFunction
 
@@ -169,7 +169,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 isHidden = arg.isHidden,
                         )
                 }
-                val overriddenJobDescriptor = OverriddenFunctionInfo(jobFunction, runtimeJobFunction)
+                val overriddenJobDescriptor = OverriddenFunctionInfo(jobFunction, runtimeJobFunction, insertSafeCasts)
                 if (!overriddenJobDescriptor.needBridge) return expression
 
                 val bridge = context.buildBridge(
@@ -194,6 +194,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
 }
 
 internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
+    private val insertSafeCasts = context.config.genericSafeCasts
 
     override fun lower(irClass: IrClass) {
         val builtBridges = mutableSetOf<IrSimpleFunction>()
@@ -201,7 +202,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
         for (function in irClass.simpleFunctions()) {
             val set = mutableSetOf<BridgeDirections>()
             for (overriddenFunction in function.allOverriddenFunctions) {
-                val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction)
+                val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction, insertSafeCasts)
                 val bridgeDirections = overriddenFunctionInfo.bridgeDirections
                 if (!bridgeDirections.allNotNeeded() && overriddenFunctionInfo.canBeCalledVirtually
                         && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
