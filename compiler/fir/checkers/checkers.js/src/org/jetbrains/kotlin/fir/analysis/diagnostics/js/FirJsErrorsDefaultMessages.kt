@@ -194,9 +194,9 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
 
-        map.put(JS_STATIC_NOT_IN_CLASS_COMPANION, "Only members of class companion objects can be annotated with '@JsStatic'");
-        map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of class companion objects can be annotated with '@JsStatic'");
-        map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is useless for const");
-        map.put(JS_STATIC_ON_OVERRIDE, "Override member of a companion object cannot be '@JsStatic'")
+        map.put(JS_STATIC_NOT_IN_CLASS_COMPANION, "Only members of class companion objects can be annotated with '@JsStatic'.");
+        map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of class companion objects can be annotated with '@JsStatic'.");
+        map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is useless for const.");
+        map.put(JS_STATIC_ON_OVERRIDE, "Override member of a companion object cannot be '@JsStatic'.")
     }
 }
