@@ -15809,6 +15809,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("generic_safe_casts.kt")
+            public void testGeneric_safe_casts() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/generic_safe_casts.kt");
+            }
+
+            @Test
             @TestMetadata("intrinsics.kt")
             public void testIntrinsics() throws Exception {
                 runTest("compiler/testData/codegen/box/fileCheck/intrinsics.kt");
