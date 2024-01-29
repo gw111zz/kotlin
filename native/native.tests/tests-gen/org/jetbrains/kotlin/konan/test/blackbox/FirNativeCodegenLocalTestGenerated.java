@@ -239,6 +239,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
         }
 
         @Test
+        @TestMetadata("kt7972.kt")
+        public void testKt7972() throws Exception {
+            runTest("native/native.tests/testData/codegen/basics/kt7972.kt");
+        }
+
+        @Test
         @TestMetadata("local_variable.kt")
         public void testLocal_variable() throws Exception {
             runTest("native/native.tests/testData/codegen/basics/local_variable.kt");
