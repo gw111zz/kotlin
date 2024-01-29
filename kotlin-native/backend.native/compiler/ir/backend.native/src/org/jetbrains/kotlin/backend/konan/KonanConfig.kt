@@ -268,6 +268,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.globalDataLazyInit) ?: true
     }
 
+    val genericSafeCasts: Boolean by lazy {
+        configuration.get(BinaryOptions.genericSafeCasts)
+                ?: !optimizationsEnabled // Disable for optimized compilation due to performance penalty.
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")
@@ -463,8 +468,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     } ?: defaultPropertyLazyInitialization
 
     internal val lazyIrForCaches: Boolean get() = configuration.get(KonanConfigKeys.LAZY_IR_FOR_CACHES)!!
-
-    internal val genericSafeCasts: Boolean get() = configuration.get(KonanConfigKeys.GENERIC_SAFE_CASTS)!!
 
     internal val entryPointName: String by lazy {
         if (target.family == Family.ANDROID) {
