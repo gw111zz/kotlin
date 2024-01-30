@@ -162,11 +162,11 @@ class FirSignatureEnhancement(
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
+                val overriddenProperties = firElement.overridden()
                 val enhancedGetterSymbol = if (getterDelegate.isJava) {
                     // Enhance the return type separately from getter to be able to pass overrides from property
-                    val overriddenMembers = firElement.overridden()
                     val enhancedReturnType = enhanceReturnType(
-                        getterDelegate, overriddenMembers, getterDelegate.computeDefaultQualifiers(),
+                        getterDelegate, overriddenProperties, getterDelegate.computeDefaultQualifiers(),
                         predefinedEnhancementInfo = null
                     )
                     getterDelegate.replaceReturnTypeRef(enhancedReturnType)
@@ -179,10 +179,9 @@ class FirSignatureEnhancement(
 
                 val setterDelegate = firElement.setter?.delegate
                 val enhancedSetterSymbol = if (setterDelegate?.isJava == true) {
-                    val overriddenMembers = firElement.overridden()
                     val valueParameter = setterDelegate.valueParameters.single() as FirJavaValueParameter
                     val enhancedValueParameterType = enhanceValueParameterType(
-                        setterDelegate, overriddenMembers, hasReceiver = false, setterDelegate.computeDefaultQualifiers(),
+                        setterDelegate, overriddenProperties, hasReceiver = false, setterDelegate.computeDefaultQualifiers(),
                         predefinedEnhancementInfo = null,
                         valueParameter, 0,
                     )
