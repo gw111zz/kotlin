@@ -169,10 +169,13 @@ class FirSignatureEnhancement(
                         getterDelegate, overriddenProperties, getterDelegate.computeDefaultQualifiers(),
                         predefinedEnhancementInfo = null
                     )
-                    getterDelegate.replaceReturnTypeRef(enhancedReturnType)
+
+                    val getterWithEnhancedReturnType = buildSimpleFunctionCopy(getterDelegate) {
+                        returnTypeRef = enhancedReturnType
+                    }
 
                     // And remember to enhance getter as a whole, otherwise we could miss match override from superclass
-                    enhancementsCache.enhancedFunctions.getValue(getterDelegate.symbol, this to getterDelegate.name)
+                    enhancementsCache.enhancedFunctions.getValue(getterWithEnhancedReturnType.symbol, this to getterWithEnhancedReturnType.name)
                 } else {
                     getterDelegate.symbol
                 }
@@ -188,10 +191,21 @@ class FirSignatureEnhancement(
                         predefinedEnhancementInfo = null,
                         valueParameter, 0,
                     )
-                    valueParameter.replaceReturnTypeRef(enhancedValueParameterType)
-                    setterDelegate.replaceReturnTypeRef(session.builtinTypes.unitType)
 
-                    enhancementsCache.enhancedFunctions.getValue(setterDelegate.symbol, this to setterDelegate.name)
+                    val setterWithEnhancedValueParameterType = buildSimpleFunctionCopy(setterDelegate) {
+                        valueParameters.clear()
+                        valueParameters.add(
+                            buildJavaValueParameterCopy(valueParameter) {
+                                returnTypeRef = enhancedValueParameterType
+                            }
+                        )
+                        returnTypeRef = session.builtinTypes.unitType
+                    }
+
+                    enhancementsCache.enhancedFunctions.getValue(
+                        setterWithEnhancedValueParameterType.symbol,
+                        this to setterWithEnhancedValueParameterType.name
+                    )
                 } else {
                     setterDelegate?.symbol
                 }
