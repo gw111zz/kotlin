@@ -181,7 +181,10 @@ class FirSignatureEnhancement(
                 val enhancedSetterSymbol = if (setterDelegate?.isJava == true) {
                     val valueParameter = setterDelegate.valueParameters.single() as FirJavaValueParameter
                     val enhancedValueParameterType = enhanceValueParameterType(
-                        setterDelegate, overriddenProperties, hasReceiver = false, setterDelegate.computeDefaultQualifiers(),
+                        setterDelegate,
+                        overriddenProperties.map { (it as FirProperty).setter!! },
+                        hasReceiver = false,
+                        setterDelegate.computeDefaultQualifiers(),
                         predefinedEnhancementInfo = null,
                         valueParameter, 0,
                     )
