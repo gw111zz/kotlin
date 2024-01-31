@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByDelegatedMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderForSetterParameterTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
@@ -350,6 +351,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("containingDeclarationProvider", filter = frontendIs(FrontendKind.Fir)) {
         test(AbstractContainingDeclarationProviderByPsiTest::class) {
             model(it, "containingDeclarationByPsi")
+        }
+
+        test(AbstractContainingDeclarationProviderByReferenceTest::class) {
+            model(it, "containingDeclarationByReference")
         }
 
         test(AbstractContainingDeclarationProviderByMemberScopeTest::class) {
