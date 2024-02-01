@@ -13712,6 +13712,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("priorityInTower.kt")
+                public void testPriorityInTower() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/priorityInTower.kt");
+                }
+
+                @Test
                 @TestMetadata("subtypingBetweenContextReceivers.kt")
                 public void testSubtypingBetweenContextReceivers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/subtypingBetweenContextReceivers.kt");
