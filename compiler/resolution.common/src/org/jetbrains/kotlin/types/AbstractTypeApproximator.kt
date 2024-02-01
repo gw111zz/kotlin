@@ -318,8 +318,17 @@ abstract class AbstractTypeApproximator(
             }
         }
         val baseSubType = type.lowerType() ?: nothingType()
+        val replacedSuperType = if (isK2 && toSuper &&
+            (0 until baseSuperType.argumentsCount()).any { baseSuperType.getArgument(it) == type }
+        ) {
+            baseSuperType.replaceArguments {
+                if (it != type) it else createStarProjection(object : TypeParameterMarker {})
+            }
+        } else baseSuperType
 
-        val approximatedSuperType by lazy(LazyThreadSafetyMode.NONE) { approximateToSuperType(baseSuperType, conf, depth) }
+        val approximatedSuperType by lazy(LazyThreadSafetyMode.NONE) {
+            approximateToSuperType(replacedSuperType, conf, depth)
+        }
         val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, conf, depth) }
 
         if (!conf.capturedType(ctx, type)) {
@@ -336,7 +345,7 @@ abstract class AbstractTypeApproximator(
                 return null
             }
         }
-        val baseResult = if (toSuper) approximatedSuperType ?: baseSuperType else approximatedSubType ?: baseSubType
+        val baseResult = if (toSuper) approximatedSuperType ?: replacedSuperType else approximatedSubType ?: baseSubType
 
         // C = in Int, Int <: C => Int? <: C?
         // C = out Number, C <: Number => C? <: Number?
