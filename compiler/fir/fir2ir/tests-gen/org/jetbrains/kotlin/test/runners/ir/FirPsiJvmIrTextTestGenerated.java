@@ -3571,12 +3571,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
-        @TestMetadata("kt62118.kt")
-        public void testKt62118() throws Exception {
-            runTest("compiler/testData/ir/irText/types/kt62118.kt");
-        }
-
-        @Test
         @TestMetadata("localVariableOfIntersectionType.kt")
         public void testLocalVariableOfIntersectionType() throws Exception {
             runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType.kt");
