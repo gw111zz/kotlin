@@ -163,25 +163,24 @@ class FirSignatureEnhancement(
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
                 val overriddenProperties = firElement.overridden()
-                val enhancedGetterSymbol = if (getterDelegate.isJava) {
+                val enhancedGetter = if (getterDelegate.isJava) {
                     // Enhance the return type separately from getter to be able to pass overrides from property
                     val enhancedReturnType = enhanceReturnType(
                         getterDelegate, overriddenProperties, getterDelegate.computeDefaultQualifiers(),
                         predefinedEnhancementInfo = null
                     )
 
-                    val getterWithEnhancedReturnType = buildSimpleFunctionCopy(getterDelegate) {
+                    buildSimpleFunctionCopy(getterDelegate) {
+                        origin = FirDeclarationOrigin.Enhancement
+                        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                         returnTypeRef = enhancedReturnType
                     }
-
-                    // And remember to enhance getter as a whole, otherwise we could miss match override from superclass
-                    enhancementsCache.enhancedFunctions.getValue(getterWithEnhancedReturnType.symbol, this to getterWithEnhancedReturnType.name)
                 } else {
-                    getterDelegate.symbol
+                    getterDelegate
                 }
 
                 val setterDelegate = firElement.setter?.delegate
-                val enhancedSetterSymbol = if (setterDelegate?.isJava == true) {
+                val enhancedSetter = if (setterDelegate?.isJava == true) {
                     val valueParameter = setterDelegate.valueParameters.single() as FirJavaValueParameter
                     val enhancedValueParameterType = enhanceValueParameterType(
                         setterDelegate,
@@ -192,7 +191,9 @@ class FirSignatureEnhancement(
                         valueParameter, 0,
                     )
 
-                    val setterWithEnhancedValueParameterType = buildSimpleFunctionCopy(setterDelegate) {
+                    buildSimpleFunctionCopy(setterDelegate) {
+                        origin = FirDeclarationOrigin.Enhancement
+                        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                         valueParameters.clear()
                         valueParameters.add(
                             buildJavaValueParameterCopy(valueParameter) {
@@ -201,13 +202,8 @@ class FirSignatureEnhancement(
                         )
                         returnTypeRef = session.builtinTypes.unitType
                     }
-
-                    enhancementsCache.enhancedFunctions.getValue(
-                        setterWithEnhancedValueParameterType.symbol,
-                        this to setterWithEnhancedValueParameterType.name
-                    )
                 } else {
-                    setterDelegate?.symbol
+                    setterDelegate
                 }
 
                 if (!getterDelegate.isJava && setterDelegate?.isJava != true) {
@@ -217,8 +213,8 @@ class FirSignatureEnhancement(
                     moduleData = this@FirSignatureEnhancement.moduleData
                     this.name = name
                     symbol = FirJavaOverriddenSyntheticPropertySymbol(accessorSymbol.callableId, accessorSymbol.getterId)
-                    delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
-                    delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
+                    delegateGetter = enhancedGetter
+                    delegateSetter = enhancedSetter
                     status = firElement.status
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                 }.symbol
