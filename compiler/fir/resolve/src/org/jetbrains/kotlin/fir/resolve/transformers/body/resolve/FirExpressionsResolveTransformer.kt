@@ -1697,7 +1697,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         data,
                     )
                     arrayLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    callCompleter.completeCall(syntheticIdCall, data)
+                    callCompleter.completeCall(syntheticIdCall, ResolutionMode.ContextIndependent)
                     arrayLiteral
                 }
             }

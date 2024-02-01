@@ -405,6 +405,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("KT-65022.kt")
+        public void testKT_65022() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/KT-65022.kt");
+        }
+
+        @Test
         @TestMetadata("KT-65044.kt")
         public void testKT_65044() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/KT-65044.kt");
