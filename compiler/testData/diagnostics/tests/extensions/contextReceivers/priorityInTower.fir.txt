@@ -78,6 +78,6 @@ FILE: c.kt
         ^test4 this@R|c/test4|.R|c/Bar.entries|
     }
     context(R|c/Bar|)
-    public final fun R|c/Baz|.test5(): R|kotlin/String| {
-        ^test5 this@R|c/test5|.R|c/Bar.w|
+    public final fun R|c/Baz|.test5(): R|kotlin/Int| {
+        ^test5 this@R|c/test5|.R|c/Baz.w|
     }

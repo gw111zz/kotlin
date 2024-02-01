@@ -157,10 +157,6 @@ internal abstract class FirBaseTowerResolveTask(
             onScope(localScope, null, parentGroup.Local(index))
         }
 
-        for ((depth, contextReceiverGroup) in towerDataElementsForName.contextReceiverGroups) {
-            onContextReceiverGroup(contextReceiverGroup, parentGroup.ContextReceiverGroup(depth))
-        }
-
         for ((depth, lexical) in towerDataElementsForName.nonLocalTowerDataElements.withIndex()) {
             val scope = lexical.scope
             if (!lexical.isLocal && scope != null) {
@@ -177,6 +173,17 @@ internal abstract class FirBaseTowerResolveTask(
             if (receiver != null) {
                 onImplicitReceiver(receiver, parentGroup.Implicit(depth))
             }
+
+            val contextReceiverGroup = towerDataElementsForName.contextReceiverGroups.getOrNull(depth)?.value
+
+            if (contextReceiverGroup != null) {
+                onContextReceiverGroup(contextReceiverGroup, parentGroup.ContextReceiverGroup(depth))
+            }
+        }
+
+        for ((depth, contextReceiverGroup) in towerDataElementsForName.contextReceiverGroups) {
+            if (depth < towerDataElementsForName.nonLocalTowerDataElements.size) continue
+            onContextReceiverGroup(contextReceiverGroup, parentGroup.ContextReceiverGroup(depth))
         }
     }
 
