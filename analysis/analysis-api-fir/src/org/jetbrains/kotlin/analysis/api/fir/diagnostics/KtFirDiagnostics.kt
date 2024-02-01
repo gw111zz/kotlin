@@ -3968,6 +3968,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val name: String
     }
 
+    interface NamedCompanionOnExportedInterface : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NamedCompanionOnExportedInterface::class
+    }
+
     interface NestedJsExport : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NestedJsExport::class
     }
@@ -4061,6 +4065,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface ExternalInterfaceAsReifiedTypeArgument : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExternalInterfaceAsReifiedTypeArgument::class
         val typeArgument: KtType
+    }
+
+    interface NamedCompanionOnExternalInterface : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NamedCompanionOnExternalInterface::class
     }
 
     interface JscodeArgumentNonConstExpression : KtFirDiagnostic<KtElement> {
