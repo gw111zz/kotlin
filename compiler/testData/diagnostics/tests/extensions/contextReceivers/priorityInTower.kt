@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 // ISSUE: KT-64531, KT-64488
 // FIR_DUMP

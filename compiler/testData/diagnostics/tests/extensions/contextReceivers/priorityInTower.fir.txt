@@ -62,22 +62,22 @@ FILE: c.kt
 
     }
     context(R|c/Bar|)
-    public final fun test1(): R|kotlin/Int| {
-        ^test1 R|c/x|
+    public final fun test1(): R|kotlin/String| {
+        ^test1 this@R|c/test1|.R|c/Bar.x|
     }
     context(R|c/Bar|)
-    public final fun test2(): R|kotlin/Int| {
-        ^test2 R|a/y|
+    public final fun test2(): R|kotlin/String| {
+        ^test2 this@R|c/test2|.R|c/Bar.y|
     }
     context(R|c/Bar|)
-    public final fun test3(): R|kotlin/Int| {
-        ^test3 R|b/z|
+    public final fun test3(): R|kotlin/String| {
+        ^test3 this@R|c/test3|.R|c/Bar.z|
     }
     context(R|c/Bar|)
     public final fun test4(): R|kotlin/String| {
         ^test4 this@R|c/test4|.R|c/Bar.entries|
     }
     context(R|c/Bar|)
-    public final fun R|c/Baz|.test5(): R|kotlin/Int| {
-        ^test5 this@R|c/test5|.R|c/Baz.w|
+    public final fun R|c/Baz|.test5(): R|kotlin/String| {
+        ^test5 this@R|c/test5|.R|c/Bar.w|
     }
