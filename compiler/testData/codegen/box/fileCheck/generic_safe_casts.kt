@@ -10,12 +10,12 @@ value class Foo(val value: Int)
 
 // CHECK-LABEL: define i32 @"kfun:#foo(kotlin.Any){}kotlin.Int
 fun foo(x: Any) = x as Int
-// CHECK-DEBUG: call zeroext i1 @IsSubtype
-// CHECK-OPT: call zeroext i1 @IsSubclassFast
-// CHECK-DEBUG-NOT: call zeroext i1 @IsSubtype
-// CHECK-OPT-NOT: call zeroext i1 @IsSubclassFast
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
-// CHECK-OPT: bitcast %struct.ObjHeader* %0 to %"kclassbody:kotlin.Int#internal"
+// CHECK-OPT: bitcast %struct.ObjHeader* {{%[0-9]+}} to %"kclassbody:kotlin.Int#internal"
 // CHECK-LABEL: epilogue:
 
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
