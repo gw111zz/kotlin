@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
+import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValue
+import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -17,12 +19,14 @@ import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeCodeFragment
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.org.objectweb.asm.Type
 
 object KtCodeFragmentModuleFactory : KtModuleFactory {
     override fun createModule(
@@ -61,6 +65,9 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
             CodeFragmentKind.TYPE -> KtTypeCodeFragment(project, fileName, fileText, contextElement)
         }
 
+        val foreignValues = testFile.directives[AnalysisApiTestCodeFragmentDirectives.CODE_FRAGMENT_FOREIGN_VALUE]
+        TestForeignValueProviderService.submitForeignValues(codeFragment, foreignValues)
+
         val module = KtDanglingFileModuleImpl(
             codeFragment,
             contextModule.ktModule,
@@ -86,6 +93,19 @@ object AnalysisApiTestCodeFragmentDirectives : SimpleDirectivesContainer() {
         description = "Import local to the code fragment content",
         applicability = DirectiveApplicability.File
     )
+
+    val CODE_FRAGMENT_FOREIGN_VALUE by valueDirective<TestForeignValue>(
+        description = "Value injected to a code fragment",
+        applicability = DirectiveApplicability.File,
+        parser = fun(rawText: String): TestForeignValue? {
+            val match = CODE_FRAGMENT_FOREIGN_VALUE_REGEX.matchEntire(rawText) ?: return null
+            val valueName = match.groupValues[1].also { require(it.isIdentifier()) }
+            val valueType = match.groupValues[2].also { Type.getType(it) } // Check that it is a valid type descriptor
+            return TestForeignValue(valueName, valueType)
+        }
+    )
+
+    private val CODE_FRAGMENT_FOREIGN_VALUE_REGEX = Regex("^(.+)\\((.+)\\)$")
 }
 
 enum class CodeFragmentKind {

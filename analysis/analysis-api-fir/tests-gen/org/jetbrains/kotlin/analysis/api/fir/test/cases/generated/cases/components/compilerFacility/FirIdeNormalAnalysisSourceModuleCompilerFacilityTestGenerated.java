@@ -209,6 +209,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
             }
 
             @Test
+            @TestMetadata("foreignValue.kt")
+            public void testForeignValue() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/foreignValue.kt");
+            }
+
+            @Test
             @TestMetadata("initializer.kt")
             public void testInitializer() throws Exception {
                 runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");

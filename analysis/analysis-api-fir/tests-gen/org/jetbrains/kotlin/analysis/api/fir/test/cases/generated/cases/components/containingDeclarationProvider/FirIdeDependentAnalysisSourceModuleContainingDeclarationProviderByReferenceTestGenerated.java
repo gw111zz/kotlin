@@ -47,6 +47,18 @@ public class FirIdeDependentAnalysisSourceModuleContainingDeclarationProviderByR
     }
 
     @Test
+    @TestMetadata("codeFragmentFromInside.kt")
+    public void testCodeFragmentFromInside() throws Exception {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/codeFragmentFromInside.kt");
+    }
+
+    @Test
+    @TestMetadata("foreignValue.kt")
+    public void testForeignValue() throws Exception {
+        runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/foreignValue.kt");
+    }
+
+    @Test
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() throws Exception {
         runTest("analysis/analysis-api/testData/components/containingDeclarationProvider/containingDeclarationByReference/localFunction.kt");
