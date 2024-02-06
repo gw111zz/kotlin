@@ -318,11 +318,26 @@ abstract class AbstractTypeApproximator(
             }
         }
         val baseSubType = type.lowerType() ?: nothingType()
-        val replacedSuperType = if (isK2 && toSuper &&
-            (0 until baseSuperType.argumentsCount()).any { baseSuperType.getArgument(it) == type }
-        ) {
+        // This replacement is important for resolving the code like below in K2.
+        //     fun bar(y: FieldOrRef<*>) = y.field
+        //     interface FieldOrRef<FF : AbstractField<FF>> { val field: FF }
+        //     abstract class AbstractField<out F : AbstractField<F>>
+        // During resolving the value parameter y type, K1 also builds a type for a star projection *.
+        // See fun TypeParameterDescriptor.starProjectionType(): KotlinType and fun buildStarProjectionTypeByTypeParameters.
+        // Thanks to it, K1 builds the star projection type as AbstractField<*> and no other approximation is needed.
+        //
+        // In turn, K2 never makes such a thing (K2 star projection has no associated type).
+        // Instead, it resolves y.field as CapturedType(*) C (see usage one line below                      v ),
+        // and the constructor of this captured type has a star projection and a supertype of AbstractField(C)
+        // Without this replacement, the type approximator currently cannot handle such a situation properly
+        // and builds AbstractField<AbstractField<AbstractField<Any?>>>.
+        // The check it == type here is intended to find a recursion inside a captured type.
+        // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
+        val replacedSuperType = if (isK2 && toSuper && baseSuperType.getArguments().any { it == type }) {
             baseSuperType.replaceArguments {
-                if (it != type) it else createStarProjection(object : TypeParameterMarker {})
+                // It's possible to use the stub here, because K2 star projection is an object and
+                // in fact this parameter is never used
+                if (it != type) it else createStarProjection(TypeParameterMarkerStubForK2StarProjection)
             }
         } else baseSuperType
 
@@ -367,6 +382,8 @@ abstract class AbstractTypeApproximator(
             }
         }
     }
+
+    private object TypeParameterMarkerStubForK2StarProjection : TypeParameterMarker
 
     private fun approximateSimpleToSuperType(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, depth: Int) =
         approximateTo(type, conf, toSuper = true, depth = depth)
