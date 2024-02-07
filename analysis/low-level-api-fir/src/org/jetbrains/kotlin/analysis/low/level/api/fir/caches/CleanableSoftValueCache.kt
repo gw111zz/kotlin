@@ -72,32 +72,33 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     fun get(key: K): V? = backingMap[key]?.get()
 
     /**
-     * If [key] is currently absent, attempts to add a value computed by [f] to the cache. [f] is invoked exactly once if [key] is present,
-     * and otherwise never. Must be called in a read action.
+     * If [key] is currently absent, attempts to add a value computed by [computeValue] to the cache. [computeValue] is invoked exactly once
+     * if [key] is present, and otherwise never. Must be called in a read action.
      *
-     * [f] should not modify the cache during computation.
+     * [computeValue] should not modify the cache during computation.
      *
      * @return The already present or newly computed value associated with [key].
      */
-    fun computeIfAbsent(key: K, f: (K) -> V): V {
+    fun computeIfAbsent(key: K, computeValue: (K) -> V): V {
         get(key)?.let { return it }
 
-        return compute(key) { _, currentValue -> currentValue ?: f(key) }
+        return compute(key) { _, currentValue -> currentValue ?: computeValue(key) }
             ?: error("`computeIfAbsent` should always return a non-null value.")
     }
 
     /**
-     * Replaces the current value at [key] with a new value computed by [f]. [f] is invoked exactly once. Must be called in a read action.
+     * Replaces the current value at [key] with a new value computed by [computeValue]. [computeValue] is invoked exactly once. Must be
+     * called in a read action.
      *
      * If the cache already contains a value `v` at [key], cleanup will be performed on it, *unless* the result of the computation is
      * referentially equal to `v`. This behavior enables computation functions to decide to retain an existing value, without triggering
      * cleanup.
      *
-     * [f] should not modify the cache during computation.
+     * [computeValue] should not modify the cache during computation.
      *
      * @return The computed value now associated with [key].
      */
-    fun compute(key: K, f: (K, V?) -> V?): V? {
+    fun compute(key: K, computeValue: (K, V?) -> V?): V? {
         // We need to keep a potentially newly computed value on the stack so that it isn't accidentally garbage-collected before the end of
         // this function. Without this variable, after `backingMap.compute` and before the end of this function, the soft reference kept in
         // the cache might be the only reference to the new value. With unlucky GC timing, it might be collected.
@@ -110,7 +111,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
             // If `currentRef` exists but its value is `null`, to the outside it will look like no value existed in the cache. It will be
             // cleaned up at the end of `compute`.
             val currentValue = currentRef?.get()
-            newValue = f(key, currentValue)
+            newValue = computeValue(key, currentValue)
 
             when {
                 newValue == null -> {
