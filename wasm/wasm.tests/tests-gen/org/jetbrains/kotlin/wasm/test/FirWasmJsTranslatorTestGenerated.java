@@ -329,12 +329,6 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
       }
 
       @Test
-      @TestMetadata("interfacesWithCompanion.kt")
-      public void testInterfacesWithCompanion() {
-        runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
-      }
-
-      @Test
       @TestMetadata("topLevelVarargFun.kt")
       public void testTopLevelVarargFun() {
         runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
@@ -505,12 +499,6 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     @TestMetadata("interfaces.kt")
     public void testInterfaces() {
       runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
-    }
-
-    @Test
-    @TestMetadata("interfacesWithCompanion.kt")
-    public void testInterfacesWithCompanion() {
-      runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
     }
 
     @Test
