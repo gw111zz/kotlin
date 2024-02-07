@@ -1,0 +1,2 @@
+Resolved to:
+0: (in Storage) val value: kotlin.String

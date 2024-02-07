@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.navigationTargetsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
-import org.jetbrains.kotlin.psi.KtFile
 
 interface KtFirReference : KtReference, KtSymbolBasedReference {
     fun getResolvedToPsi(analysisSession: KtAnalysisSession, referenceTargetSymbols: Collection<KtSymbol>): Collection<PsiElement> =

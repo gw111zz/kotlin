@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtFirReference
@@ -17,5 +20,17 @@ internal class KtFirKDocReference(element: KDocName) : KDocReference(element), K
         val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
         val selectedFqName = element.getQualifiedNameAsFqName()
         return KDocReferenceResolver.resolveKdocFqName(selectedFqName, fullFqName, element)
+    }
+
+    override fun getResolvedToPsi(
+        analysisSession: KtAnalysisSession,
+        referenceTargetSymbols: Collection<KtSymbol>,
+    ): Collection<PsiElement> = with(analysisSession) {
+        referenceTargetSymbols.flatMap { symbol ->
+            when (symbol) {
+                is KtFirSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi)
+                else -> listOfNotNull(symbol.psi)
+            }
+        }
     }
 }

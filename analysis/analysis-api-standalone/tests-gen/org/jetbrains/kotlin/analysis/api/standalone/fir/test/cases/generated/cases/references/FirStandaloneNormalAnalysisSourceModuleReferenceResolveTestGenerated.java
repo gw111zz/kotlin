@@ -1831,6 +1831,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
             public void testStaticFunctionQualifiedWithKotlinSubclass() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/StaticFunctionQualifiedWithKotlinSubclass.kt");
             }
+
+            @Test
+            @TestMetadata("SyntheticFieldInInterface.kt")
+            public void testSyntheticFieldInInterface() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/javaDeclarations/SyntheticFieldInInterface.kt");
+            }
         }
 
         @Nested
