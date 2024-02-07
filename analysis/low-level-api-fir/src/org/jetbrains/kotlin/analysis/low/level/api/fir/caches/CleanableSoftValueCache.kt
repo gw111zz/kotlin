@@ -214,6 +214,9 @@ class CleanableSoftValueCache<K : Any, V : Any>(
      */
     val size: Int
         get() {
+            // Process the reference queue first to remove values which have already been garbage-collected to get a more accurate size.
+            // Still, an accurate size is not fully guaranteed, as additional garbage collection may occur between `processQueue` and the
+            // end of the function.
             processQueue()
             return backingMap.size
         }
@@ -222,6 +225,9 @@ class CleanableSoftValueCache<K : Any, V : Any>(
      * Returns whether the cache is empty. Must be called in a read action.
      */
     fun isEmpty(): Boolean {
+        // Process the reference queue first to remove values which have already been garbage-collected to get a more accurate answer.
+        // Still, accuracy is not fully guaranteed, as additional garbage collection may occur between `processQueue` and the end of the
+        // function.
         processQueue()
         return backingMap.isEmpty()
     }
@@ -232,8 +238,8 @@ class CleanableSoftValueCache<K : Any, V : Any>(
      */
     val keys: Set<K>
         get() {
-            // Process the reference queue first to avoid returning keys whose values have already been garbage-collected (and should thus
-            // not be part of the cache when viewed from the outside).
+            // Process the reference queue first to avoid returning keys whose values have already been garbage-collected. Still, this is
+            // not fully guaranteed, as additional garbage collection may occur between `processQueue` and the end of the function.
             processQueue()
             return backingMap.keys.toSet()
         }
