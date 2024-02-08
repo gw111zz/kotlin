@@ -94,27 +94,22 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.useAs(type: IrType, skipTypeCheck: Boolean): IrExpression {
+        if (this is IrTypeOperatorCall && (this.operator == IrTypeOperator.CAST || this.operator == IrTypeOperator.IMPLICIT_CAST))
+            return this.adaptIfNecessary(actualType = context.irBuiltIns.anyNType, type, skipTypeCheck = true)
+
         val actualType = when (this) {
-            is IrCall -> {
-                if (this.symbol == symbols.reinterpret) this.getTypeArgument(1)!!
-                else this.callTarget.returnType
-            }
             is IrGetField -> this.symbol.owner.type
-
-            is IrTypeOperatorCall -> when (this.operator) {
-                IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
-                    // TODO: is it a workaround for inconsistent IR?
-                    this.typeOperand
-
-                IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> context.irBuiltIns.anyNType
-
-                else -> this.type
+            is IrCall -> when (this.symbol) {
+                symbols.reinterpret -> this.getTypeArgument(1)!!
+                else -> this.callTarget.returnType
             }
-
             else -> this.type
         }
-
-        return this.adaptIfNecessary(actualType, type, skipTypeCheck = if (this is IrTypeOperatorCall && (this.operator == IrTypeOperator.CAST || this.operator == IrTypeOperator.IMPLICIT_CAST)) true else skipTypeCheck)
+        return if (this.type.isUnit() && !actualType.isUnit())
+            irBuilders.peek()!!.at(this).irImplicitCoercionToUnit(this)
+                    .adaptIfNecessary(actualType = irBuiltIns.unitType, type, skipTypeCheck)
+        else
+            this.adaptIfNecessary(actualType, type, skipTypeCheck)
     }
 
     private val IrFunctionAccessExpression.target: IrFunction get() = when (this) {
