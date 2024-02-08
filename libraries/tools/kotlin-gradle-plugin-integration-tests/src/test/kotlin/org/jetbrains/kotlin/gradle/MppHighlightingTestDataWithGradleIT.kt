@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -238,5 +239,6 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{0} - {1} - {2} - {3}: {displayName}")
     @ArgumentsSource(GradleAndMppHighlightingProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     annotation class GradleWithMppHighlightingTest
 }
