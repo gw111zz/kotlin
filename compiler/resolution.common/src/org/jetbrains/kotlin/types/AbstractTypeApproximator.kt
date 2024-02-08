@@ -504,19 +504,6 @@ abstract class AbstractTypeApproximator(
 
             val capturedType = argumentType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().asCapturedType()
 
-            // When capturing recursive types with self upper bounds, their super types can contain captured types.
-            // In approximateCapturedType, we check if the super/subtypes of captured types need approximation even if captured types
-            // themselves don't need approximation, and will land here.
-            // To support this case, we also don't want to approximate captured types here if the configuration says so.
-            // TODO rework captured types approximation KT-65228
-            if (capturedType != null &&
-                isK2 &&
-                !conf.capturedType(ctx, capturedType) &&
-                ctx.hasRecursiveTypeParametersWithGivenSelfType(capturedType.typeConstructor())
-            ) {
-                continue@loop
-            }
-
             val capturedStarProjectionOrNull =
                 capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
 

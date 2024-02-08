@@ -27,7 +27,7 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBounds.kt
 
     }
     private final fun test(node: R|Foo<*>|): R|kotlin/Unit| {
-        R|<local>/node|.R|SubstitutionOverride</Foo.data: R|kotlin/collections/Map<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|it(kotlin/Enum<*> & I)|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        R|<local>/node|.R|SubstitutionOverride</Foo.data: R|kotlin/collections/Map<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out kotlin/Any?> & I)> & I)> & I)> & I)> & I)|, R|kotlin/Any?|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     }
     public open class FooEnumMap<P : R|kotlin/Enum<P>|, R|I|> : R|kotlin/Any| {
         public constructor<P : R|kotlin/Enum<P>|, R|I|>(data: R|java/util/EnumMap<P, kotlin/Any?>|): R|FooEnumMap<P>| {
@@ -39,7 +39,7 @@ FILE: onlyInputTypesCapturedTypeWithRecursiveBounds.kt
 
     }
     private final fun test(node: R|FooEnumMap<*>|): R|kotlin/Unit| {
-        R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<*> & I), it(kotlin/Enum<*>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
+        R|<local>/node|.R|SubstitutionOverride</FooEnumMap.data: R|java/util/EnumMap<CapturedType(*), kotlin/Any?>|>|.R|kotlin/collections/get|<R|ft<it(kotlin/Enum<out ft<it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out kotlin/Any?> & I)> & I)> & I)> & I), it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out kotlin/Any?> & I)> & I)> & I)>? & I?)>> & I), it(kotlin/Enum<out ft<it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out kotlin/Any?> & I)> & I)> & I)> & I), it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out it(kotlin/Enum<out kotlin/Any?> & I)> & I)> & I)>? & I?)>>? & I?)>|, R|kotlin/Any!|>(Q|MyEnum|.R|/MyEnum.EnumEntry|)
     }
     public open class Foo2<P : R|I|> : R|kotlin/Any| {
         public constructor<P : R|I|>(data: R|kotlin/collections/Map<P, kotlin/Any?>|): R|Foo2<P>| {
