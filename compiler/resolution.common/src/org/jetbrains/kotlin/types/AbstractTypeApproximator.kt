@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
-import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
@@ -333,7 +332,10 @@ abstract class AbstractTypeApproximator(
         // and builds AbstractField<AbstractField<AbstractField<Any?>>>.
         // The check it == type here is intended to find a recursion inside a captured type.
         // A similar replacement for baseSubType looks unnecessary, no hits in the tests.
-        val replacedSuperType = if (isK2 && toSuper && baseSuperType.getArguments().any { it == capturedType }) {
+        val replacedSuperType = if (isK2 && toSuper && baseSuperType.getArguments().any {
+                !it.isStarProjection() && it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() == capturedType
+            }
+        ) {
             baseSuperType.replaceArguments {
                 // It's possible to use the stub here, because K2 star projection is an object and
                 // in fact this parameter is never used
