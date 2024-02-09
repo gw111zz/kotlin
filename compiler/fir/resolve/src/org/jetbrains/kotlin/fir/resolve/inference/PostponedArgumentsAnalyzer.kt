@@ -144,6 +144,13 @@ class PostponedArgumentsAnalyzer(
             else -> null
         }
 
+        if (!withPCLASession && lambda.inputTypes.any { inputType ->
+                with(c) { inputType.extractTypeVariables() }.any(c.notFixedTypeVariables::contains)
+            }
+        ) {
+            throw AssertionError("Should be PCLA session")
+        }
+
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
             lambda,
             receiver,
