@@ -37,9 +37,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -307,21 +305,10 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
         return bridge
     }
 
-    val bridgeDirections = overriddenFunction.bridgeDirections
     val irBuilder = createIrBuilder(bridge.symbol, startOffset, endOffset)
     bridge.body = irBuilder.irBlockBody(bridge) {
         val typeSafeBarrierDescription = overriddenFunction.overriddenFunction.getDefaultValueForOverriddenBuiltinFunction()
         typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, overriddenFunction.function, it) }
-
-        fun castIfNeeded(value: IrExpression, expectedType: IrType, bridgeDirection: BridgeDirection) =
-                if (bridgeDirection.kind != BridgeDirectionKind.CAST)
-                    value
-                else {
-                    val erasedExpectedType = expectedType.erasure()
-                    if (erasedExpectedType.isNullable())
-                        irAs(value, erasedExpectedType)
-                    else irImplicitCast(irAs(value, erasedExpectedType.makeNullable()), erasedExpectedType)
-                }
 
         val delegatingCall = IrCallImpl.fromSymbolOwner(
                 startOffset,
@@ -332,22 +319,12 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                 valueArgumentsCount = target.valueParameters.size,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
-            bridge.dispatchReceiverParameter?.let {
-                dispatchReceiver = castIfNeeded(
-                        irGet(it), target.dispatchReceiverParameter!!.type, bridgeDirections.dispatchReceiverDirection)
-            }
-            bridge.extensionReceiverParameter?.let {
-                extensionReceiver = castIfNeeded(
-                        irGet(it), target.extensionReceiverParameter!!.type, bridgeDirections.extensionReceiverDirection)
-            }
-            bridge.valueParameters.forEachIndexed { index, parameter ->
-                putValueArgument(index, castIfNeeded(
-                        irGet(parameter), target.valueParameters[index].type, bridgeDirections.parameterDirectionAt(index))
-                )
-            }
+            bridge.dispatchReceiverParameter?.let { dispatchReceiver = irGet(it) }
+            bridge.extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
+            bridge.valueParameters.forEachIndexed { index, parameter -> putValueArgument(index, irGet(parameter)) }
         }
 
-        +irReturn(castIfNeeded(delegatingCall, bridge.returnType, bridgeDirections.returnDirection))
+        +irReturn(delegatingCall)
     }
     return bridge
 }
