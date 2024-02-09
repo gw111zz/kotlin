@@ -142,15 +142,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     /**
-     * Casts this expression to `type` without changing its representation in generated code.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    private fun IrExpression.uncheckedCast(type: IrType): IrExpression {
-        // TODO: apply some cast if types are incompatible; not required currently.
-        return this
-    }
-
-    /**
      * Performs an actual type check operation.
      */
     private fun IrExpression.checkedCast(actualType: IrType, expectedType: IrType) =
@@ -158,7 +149,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 val expression = irImplicitCast(this@checkedCast, actualType)
                 if (expectedType.isNullable())
                     irAs(expression, expectedType)
-                else irAs(expression, expectedType.makeNullable()).uncheckedCast(expectedType)
+                else irAs(expression, expectedType.makeNullable())
             }
 
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
@@ -183,7 +174,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                         && expectedClass?.isObjCMetaClass() != true // See KT-65260 for details.
                 -> {
                     this.checkedCast(actualType, erasedExpectedType)
-                            .uncheckedCast(this.type) // Try not to bring new type incompatibilities.
                 }
                 else -> this
             }
@@ -200,11 +190,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             val parameter = conversion.owner.valueParameters.single()
             val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
                 this.checkedCast(actualType, conversion.owner.returnType)
-            else this.uncheckedCast(parameter.type)
+            else this
 
             irBuilders.peek()!!.at(this)
                     .irCall(conversion).apply { this.putValueArgument(parameter.index, argument) }
-                    .uncheckedCast(this.type) // Try not to bring new type incompatibilities.
         }
     }
 
