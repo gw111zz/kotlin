@@ -62,11 +62,20 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
     // The number of batches sharad inside a parallel processor may only grow,
     // we use this number to decide when to finish the mark.
     auto everSharedBatches = parallelProcessor_->batchesEverShared();
-    int iter = 0;
+    size_t iter = 0;
+    bool terminateInSTW = false;
     do {
-        GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%d)", iter);
+        GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%zu)", iter);
         Mark<MarkTraits>(gcHandle(), mainWorker);
+
+        RuntimeAssert(iter <= compiler::concurrentMarkMaxIterations(), "Failed to terminate mark in STW in a single iteration");
         ++iter;
+        if (iter == compiler::concurrentMarkMaxIterations()) {
+            fprintf(stderr, "EMERGENCY MARK TERMINATION\n");
+            GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after (%zu concurrent attempts)", iter);
+            stopTheWorld(gcHandle(), "GC stop the world #2: concurrent mark took too long");
+            terminateInSTW = true;
+        }
     } while (!tryTerminateMark(everSharedBatches));
 
     for (auto& thread : *lockedMutatorsList_) {
@@ -77,7 +86,9 @@ void gc::mark::ConcurrentMark::runMainInSTW() {
 
     gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::SpecialRefRegistry::instance());
 
-    stopTheWorld(gcHandle(), "GC stop the world #2: finish mark");
+    if (!terminateInSTW) {
+        stopTheWorld(gcHandle(), "GC stop the world #2: prepare to sweep");
+    }
 
     barriers::disableBarriers();
 }
