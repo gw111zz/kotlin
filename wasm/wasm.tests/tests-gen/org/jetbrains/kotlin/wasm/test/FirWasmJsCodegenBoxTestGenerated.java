@@ -24644,6 +24644,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
                 runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride2.kt");
             }
 
+            @Test
+            @TestMetadata("kt-65249.kt")
+            public void testKt_65249() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
             @TestDataPath("$PROJECT_ROOT")

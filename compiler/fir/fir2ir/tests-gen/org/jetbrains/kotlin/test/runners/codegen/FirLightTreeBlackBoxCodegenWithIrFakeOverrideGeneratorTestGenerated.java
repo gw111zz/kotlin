@@ -35331,6 +35331,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
             }
 
             @Test
+            @TestMetadata("kt-65249.kt")
+            public void testKt_65249() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/kt-65249.kt");
+            }
+
+            @Test
             @TestMetadata("staticjavaFieldInCommonCode.kt")
             public void testStaticjavaFieldInCommonCode() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/staticjavaFieldInCommonCode.kt");

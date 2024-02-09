@@ -197,7 +197,9 @@ private fun IrFakeOverrideBuilder.buildForAll(
         }
 
         override fun visitClass(declaration: IrClass) {
-            buildFakeOverrides(declaration)
+            if (!declaration.isExpect) {
+                buildFakeOverrides(declaration)
+            }
             declaration.acceptChildrenVoid(this)
         }
     }
