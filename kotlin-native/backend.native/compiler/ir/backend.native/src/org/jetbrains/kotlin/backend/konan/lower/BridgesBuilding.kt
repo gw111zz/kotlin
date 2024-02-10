@@ -66,28 +66,31 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
 
     private fun createBridge(key: NativeMapping.BridgeKey): IrSimpleFunction {
         val (function, bridgeDirections) = key
+        val target = function.target
 
+        // Note: bridgeDirection.type() = null only for BridgeDirectionKind.NONE (no conversion required),
+        // so in this case the type is taken from target - the function to be called.
         return irFactory.buildFun {
             startOffset = function.startOffset
             endOffset = function.endOffset
-            origin = DECLARATION_ORIGIN_BRIDGE_METHOD(function)
+            origin = DECLARATION_ORIGIN_BRIDGE_METHOD(target)
             name = "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName
             visibility = function.visibility
             modality = function.modality
-            returnType = bridgeDirections.returnDirection.type() ?: function.returnType
+            returnType = bridgeDirections.returnDirection.type() ?: target.returnType
             isSuspend = function.isSuspend
         }.apply {
             attributeOwnerId = function.attributeOwnerId
             parent = function.parent
             val bridge = this
 
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.let {
+            dispatchReceiverParameter = target.dispatchReceiverParameter?.let {
                 it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
             }
-            extensionReceiverParameter = function.extensionReceiverParameter?.let {
+            extensionReceiverParameter = target.extensionReceiverParameter?.let {
                 it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
             }
-            valueParameters = function.valueParameters.map {
+            valueParameters = target.valueParameters.map {
                 it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
             }
 
