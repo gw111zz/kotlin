@@ -865,6 +865,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("test25.kt")
+        public void testTest25() throws Exception {
+            runTest("native/native.tests/testData/codegen/bridges/test25.kt");
+        }
+
+        @Test
         @TestMetadata("test3.kt")
         public void testTest3() throws Exception {
             runTest("native/native.tests/testData/codegen/bridges/test3.kt");
