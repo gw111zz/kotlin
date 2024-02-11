@@ -23,5 +23,5 @@ actual abstract class ForwardingSource : Source {
 }
 
 fun box() : String{
-    return (object : ForwardingSource()).read(Buffer())
+    return (object : ForwardingSource() {}).read(Buffer())
 }
