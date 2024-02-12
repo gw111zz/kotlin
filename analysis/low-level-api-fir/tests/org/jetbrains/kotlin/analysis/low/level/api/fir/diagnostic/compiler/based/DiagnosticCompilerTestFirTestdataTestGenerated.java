@@ -177,6 +177,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("delegateByArrayLiteral.kt")
+        public void testDelegateByArrayLiteral() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/delegateByArrayLiteral.kt");
+        }
+
+        @Test
         @TestMetadata("delegatedSuperType.kt")
         public void testDelegatedSuperType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/delegatedSuperType.kt");
@@ -402,12 +408,6 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         @TestMetadata("javaStaticScopeInheritance.kt")
         public void testJavaStaticScopeInheritance() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/javaStaticScopeInheritance.kt");
-        }
-
-        @Test
-        @TestMetadata("KT-65022.kt")
-        public void testKT_65022() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/KT-65022.kt");
         }
 
         @Test

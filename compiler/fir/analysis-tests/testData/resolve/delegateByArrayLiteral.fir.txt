@@ -1,4 +1,4 @@
-FILE: KT-65022.kt
+FILE: delegateByArrayLiteral.kt
     public final val d: <ERROR TYPE REF: Unresolved name: getValue>by <implicitArrayOf>()
         public get(): <ERROR TYPE REF: Unresolved name: getValue> {
             ^ D|/d|.<Unresolved name: getValue>#(Null(null), ::R|/d|)
