@@ -16,6 +16,39 @@ public abstract @interface Anno1 {
 ////////////////////
 
 /**
+ * public final enum class Colors : kotlin/Enum<Colors> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   WHITE,
+ *
+ *   BLACK,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Colors {
+    WHITE,
+    BLACK;
+
+
+    Colors() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Colors> getEntries() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
  * public final annotation class Anno2 : kotlin/Annotation {
  *
  *   // signature: <init>(ILjava/lang/String;[ILkotlin/Array;LAnno1;LColors;Lkotlin/Array;Lkotlin/reflect/KClass;Lkotlin/Array;)V
@@ -110,73 +143,6 @@ public abstract @interface Anno3 {
 ////////////////////
 
 /**
- * public final enum class Colors : kotlin/Enum<Colors> {
- *
- *   // signature: <init>(Ljava/lang/String;I)V
- *   private constructor()
- *
- *   WHITE,
- *
- *   BLACK,
- *
- *   // module name: main
- *
- *   // has Enum.entries
- * }
- */
-@kotlin.Metadata()
-public enum Colors {
-    WHITE,
-    BLACK;
-
-
-    Colors() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<Colors> getEntries() {
-        return null;
-    }
-}
-
-
-////////////////////
-
-/**
- * public final enum class Enum1 : kotlin/Enum<Enum1> {
- *
- *   // signature: <init>(Ljava/lang/String;I)V
- *   private constructor()
- *
- *   BLACK,
- *
- *   WHITE,
- *
- *   // module name: main
- *
- *   // has Enum.entries
- * }
- */
-@kotlin.Metadata()
-public enum Enum1 {
-    BLACK,
-    @Anno1()
-    WHITE;
-
-
-    Enum1() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<Enum1> getEntries() {
-        return null;
-    }
-}
-
-
-////////////////////
-
-/**
  * public final class TestAnno : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -248,5 +214,39 @@ public final class TestAnno2 {
 
     @Anno3(value = "setter")
     public final void setB(@Anno3(value = "setparam") @org.jetbrains.annotations.NotNull() java.lang.String p0) {
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final enum class Enum1 : kotlin/Enum<Enum1> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   BLACK,
+ *
+ *   WHITE,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Enum1 {
+    BLACK,
+    @Anno1()
+    WHITE;
+
+
+    Enum1() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Enum1> getEntries() {
+        return null;
     }
 }

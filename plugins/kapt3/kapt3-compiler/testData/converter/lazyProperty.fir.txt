@@ -1,4 +1,30 @@
 /**
+ * public abstract interface Intf : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Intf {
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface GenericIntf<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface GenericIntf<T extends java.lang.Object> {
+}
+
+
+////////////////////
+
+/**
  * public final class Foo : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -60,30 +86,4 @@ public final class Foo {
     private final GenericIntf<java.lang.CharSequence> getGeneric1() {
         return null;
     }
-}
-
-
-////////////////////
-
-/**
- * public abstract interface GenericIntf<T#0 (* T *)> : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface GenericIntf<T extends java.lang.Object> {
-}
-
-
-////////////////////
-
-/**
- * public abstract interface Intf : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface Intf {
 }

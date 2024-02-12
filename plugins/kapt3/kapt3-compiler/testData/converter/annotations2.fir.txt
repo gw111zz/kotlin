@@ -27,93 +27,6 @@ public abstract @interface Anno {
 package test;
 
 /**
- * package {
- *
- *   // signature: topLevelFun(Ljava/lang/String;)V
- *   public final fun kotlin/String.topLevelFun(): kotlin/Unit
- *
- *   // getter: getTopLevelVal(I)Ljava/lang/String;
- *   // synthetic method for annotations: getTopLevelVal$annotations(I)V
- *   public final val kotlin/Int.topLevelVal: kotlin/String
- *     public final (* non-default *) get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@kotlin.jvm.JvmName(name = "AnnotationsTest")
-public final class AnnotationsTest {
-
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver") int $this$topLevelVal) {
-        return null;
-    }
-
-    @Anno(value = "top-level-val")
-    @java.lang.Deprecated()
-    public static void getTopLevelVal$annotations(int p0) {
-    }
-
-    @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver") @org.jetbrains.annotations.NotNull() java.lang.String $this$topLevelFun) {
-    }
-}
-
-
-////////////////////
-
-package test;
-
-/**
- * public final enum class test/Enum : kotlin/Enum<test/Enum> {
- *
- *   // signature: <init>(Ljava/lang/String;II)V
- *   private constructor(x: kotlin/Int)
- *
- *   // field: x:I
- *   // getter: getX()I
- *   public final val x: kotlin/Int
- *     public final get
- *
- *   WHITE,
- *
- *   BLACK,
- *
- *   // module name: main
- *
- *   // has Enum.entries
- * }
- */
-@kotlin.Metadata()
-@Anno(value = "enum")
-public enum Enum {
-    @Anno(value = "white")
-    WHITE,
-    @Anno(value = "black")
-    BLACK;
-
-    private final int x = 0;
-
-    @Anno(value = "enum-constructor")
-    Enum(@Anno(value = "x") int x) {
-    }
-
-    public final int getX() {
-        return 0;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
-        return null;
-    }
-}
-
-
-////////////////////
-
-package test;
-
-/**
  * public abstract class test/Test : kotlin/Any {
  *
  *   // signature: <init>(Ljava/lang/String;)V
@@ -174,5 +87,92 @@ public abstract class Test {
     @Anno(value = "abstract-val")
     @java.lang.Deprecated()
     public static void getAbstractVal$annotations() {
+    }
+}
+
+
+////////////////////
+
+package test;
+
+/**
+ * public final enum class test/Enum : kotlin/Enum<test/Enum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;II)V
+ *   private constructor(x: kotlin/Int)
+ *
+ *   // field: x:I
+ *   // getter: getX()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   WHITE,
+ *
+ *   BLACK,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+@Anno(value = "enum")
+public enum Enum {
+    @Anno(value = "white")
+    WHITE,
+    @Anno(value = "black")
+    BLACK;
+
+    private final int x = 0;
+
+    @Anno(value = "enum-constructor")
+    Enum(@Anno(value = "x") int x) {
+    }
+
+    public final int getX() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: topLevelFun(Ljava/lang/String;)V
+ *   public final fun kotlin/String.topLevelFun(): kotlin/Unit
+ *
+ *   // getter: getTopLevelVal(I)Ljava/lang/String;
+ *   // synthetic method for annotations: getTopLevelVal$annotations(I)V
+ *   public final val kotlin/Int.topLevelVal: kotlin/String
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmName(name = "AnnotationsTest")
+public final class AnnotationsTest {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver") int $this$topLevelVal) {
+        return null;
+    }
+
+    @Anno(value = "top-level-val")
+    @java.lang.Deprecated()
+    public static void getTopLevelVal$annotations(int p0) {
+    }
+
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver") @org.jetbrains.annotations.NotNull() java.lang.String $this$topLevelFun) {
     }
 }

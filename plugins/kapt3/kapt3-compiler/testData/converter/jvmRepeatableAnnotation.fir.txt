@@ -1,26 +1,4 @@
 /**
- * public final class A : kotlin/Any {
- *
- *   // signature: <init>()V
- *   public constructor()
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@Condition(condition = "value1")
-@Condition(condition = "value2")
-public final class A {
-
-    public A() {
-        super();
-    }
-}
-
-
-////////////////////
-
-/**
  * public final annotation class Condition : kotlin/Annotation {
  *
  *   // signature: <init>(Ljava/lang/String;)V
@@ -38,4 +16,26 @@ public final class A {
 public abstract @interface Condition {
 
     public abstract java.lang.String condition();
+}
+
+
+////////////////////
+
+/**
+ * public final class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@Condition(condition = "value1")
+@Condition(condition = "value2")
+public final class A {
+
+    public A() {
+        super();
+    }
 }

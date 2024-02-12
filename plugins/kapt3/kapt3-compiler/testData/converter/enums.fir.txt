@@ -1,27 +1,4 @@
 /**
- * public final annotation class Anno1 : kotlin/Annotation {
- *
- *   // signature: <init>(Ljava/lang/String;)V
- *   public constructor(value: kotlin/String)
- *
- *   // getter: value()Ljava/lang/String;
- *   public final val value: kotlin/String
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Anno1 {
-
-    public abstract java.lang.String value();
-}
-
-
-////////////////////
-
-/**
  * public final enum class Enum1 : kotlin/Enum<Enum1> {
  *
  *   // signature: <init>(Ljava/lang/String;I)V
@@ -49,6 +26,29 @@ public enum Enum1 {
     public static kotlin.enums.EnumEntries<Enum1> getEntries() {
         return null;
     }
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class Anno1 : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno1 {
+
+    public abstract java.lang.String value();
 }
 
 
@@ -131,6 +131,36 @@ public enum Enum2 {
 ////////////////////
 
 /**
+ * public final enum class Nested1 : kotlin/Enum<Nested1> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   WHITE,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Nested1 {
+    WHITE;
+
+
+    Nested1() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Nested1> getEntries() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
  * public abstract interface I : kotlin/Any {
  *
  *   // nested class: Nested
@@ -165,35 +195,5 @@ public abstract interface I {
         public static kotlin.enums.EnumEntries<I.Nested> getEntries() {
             return null;
         }
-    }
-}
-
-
-////////////////////
-
-/**
- * public final enum class Nested1 : kotlin/Enum<Nested1> {
- *
- *   // signature: <init>(Ljava/lang/String;I)V
- *   private constructor()
- *
- *   WHITE,
- *
- *   // module name: main
- *
- *   // has Enum.entries
- * }
- */
-@kotlin.Metadata()
-public enum Nested1 {
-    WHITE;
-
-
-    Nested1() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<Nested1> getEntries() {
-        return null;
     }
 }

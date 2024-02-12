@@ -1,27 +1,4 @@
 /**
- * public final annotation class Anno : kotlin/Annotation {
- *
- *   // signature: <init>(Lkotlin/reflect/KClass;)V
- *   public constructor(klass: kotlin/reflect/KClass<*>)
- *
- *   // getter: klass()Ljava/lang/Class;
- *   public final val klass: kotlin/reflect/KClass<*>
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Anno {
-
-    public abstract java.lang.Class<?> klass();
-}
-
-
-////////////////////
-
-/**
  * public final class ErrorMissingAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -82,6 +59,29 @@ public final class ErrorSomeMissingAnnotations {
     public ErrorSomeMissingAnnotations() {
         super();
     }
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/reflect/KClass;)V
+ *   public constructor(klass: kotlin/reflect/KClass<*>)
+ *
+ *   // getter: klass()Ljava/lang/Class;
+ *   public final val klass: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract java.lang.Class<?> klass();
 }
 
 

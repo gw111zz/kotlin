@@ -1,4 +1,36 @@
 /**
+ * public abstract interface IntfWithoutDefaultImpls : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface IntfWithoutDefaultImpls {
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface IntfWithDefaultImpls : kotlin/Any {
+ *
+ *   // signature: a()V
+ *   public open fun a(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface IntfWithDefaultImpls {
+
+    public default void a() {
+    }
+}
+
+
+////////////////////
+
+/**
  * public abstract interface Intf : kotlin/Any {
  *
  *   // getter: getColor()I
@@ -55,36 +87,4 @@ public abstract interface Intf {
             return 0;
         }
     }
-}
-
-
-////////////////////
-
-/**
- * public abstract interface IntfWithDefaultImpls : kotlin/Any {
- *
- *   // signature: a()V
- *   public open fun a(): kotlin/Unit
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface IntfWithDefaultImpls {
-
-    public default void a() {
-    }
-}
-
-
-////////////////////
-
-/**
- * public abstract interface IntfWithoutDefaultImpls : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface IntfWithoutDefaultImpls {
 }

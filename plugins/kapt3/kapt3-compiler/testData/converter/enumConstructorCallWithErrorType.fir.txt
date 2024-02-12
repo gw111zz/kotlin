@@ -1,4 +1,17 @@
 /**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+}
+
+
+////////////////////
+
+/**
  * public final enum class E : kotlin/Enum<E> {
  *
  *   // signature: <init>(Ljava/lang/String;ILI;)V
@@ -42,17 +55,4 @@ public enum E {
     public static kotlin.enums.EnumEntries<E> getEntries() {
         return null;
     }
-}
-
-
-////////////////////
-
-/**
- * public abstract interface I : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface I {
 }

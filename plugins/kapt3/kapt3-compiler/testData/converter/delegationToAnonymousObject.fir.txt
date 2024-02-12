@@ -1,4 +1,17 @@
 /**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+}
+
+
+////////////////////
+
+/**
  * public final class C : I {
  *
  *   // signature: <init>()V
@@ -13,17 +26,4 @@ public final class C implements I {
     public C() {
         super();
     }
-}
-
-
-////////////////////
-
-/**
- * public abstract interface I : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface I {
 }

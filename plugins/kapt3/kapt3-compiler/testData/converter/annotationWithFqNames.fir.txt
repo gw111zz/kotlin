@@ -1,6 +1,29 @@
 package test;
 
 /**
+ * public final class test/Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class})
+public final class Foo {
+
+    public Foo() {
+        super();
+    }
+}
+
+
+////////////////////
+
+package test;
+
+/**
  * public final class test/Bar : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -37,29 +60,6 @@ package test;
 public final class Boo {
 
     public Boo() {
-        super();
-    }
-}
-
-
-////////////////////
-
-package test;
-
-/**
- * public final class test/Foo : kotlin/Any {
- *
- *   // signature: <init>()V
- *   public constructor()
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@lib.Anno(impls = {lib.impl.Impl.class})
-public final class Foo {
-
-    public Foo() {
         super();
     }
 }

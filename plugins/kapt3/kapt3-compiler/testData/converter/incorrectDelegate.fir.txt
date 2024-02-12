@@ -1,24 +1,4 @@
 /**
- * public final class GroupedNewsListDelegateAdapter : kotlin/Any {
- *
- *   // signature: <init>(Lkotlin/jvm/functions/Function0;)V
- *   public constructor(onWiFiClickListener: kotlin/Function0<kotlin/Unit>)
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class GroupedNewsListDelegateAdapter {
-
-    public GroupedNewsListDelegateAdapter(@org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<kotlin.Unit> onWiFiClickListener) {
-        super();
-    }
-}
-
-
-////////////////////
-
-/**
  * public final class HomeFragment : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -61,6 +41,26 @@ public final class HomeFragment {
 
     private final GroupedNewsListDelegateAdapter getGroupedNewsListAdapter() {
         return null;
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final class GroupedNewsListDelegateAdapter : kotlin/Any {
+ *
+ *   // signature: <init>(Lkotlin/jvm/functions/Function0;)V
+ *   public constructor(onWiFiClickListener: kotlin/Function0<kotlin/Unit>)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class GroupedNewsListDelegateAdapter {
+
+    public GroupedNewsListDelegateAdapter(@org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<kotlin.Unit> onWiFiClickListener) {
+        super();
     }
 }
 

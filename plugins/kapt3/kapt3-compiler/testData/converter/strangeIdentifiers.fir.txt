@@ -1,86 +1,4 @@
 /**
- * public final annotation class Anno : kotlin/Annotation {
- *
- *   // signature: <init>(LStrangeEnum;Ljava/lang/String;Ljava/lang/String;)V
- *   public constructor(size: StrangeEnum, name: kotlin/String, A B: kotlin/String)
- *
- *   // getter: A B()Ljava/lang/String;
- *   public final val A B: kotlin/String
- *     public final get
- *
- *   // getter: name()Ljava/lang/String;
- *   public final val name: kotlin/String
- *     public final get
- *
- *   // getter: size()LStrangeEnum;
- *   public final val size: StrangeEnum
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Anno {
-
-    public abstract StrangeEnum size();
-
-    public abstract java.lang.String name();
-
-}
-
-
-////////////////////
-
-/**
- * public final enum class StrangeEnum : kotlin/Enum<StrangeEnum> {
- *
- *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
- *   private constructor(size: kotlin/String)
- *
- *   // field: size:Ljava/lang/String;
- *   // getter: getSize()Ljava/lang/String;
- *   public final val size: kotlin/String
- *     public final get
- *
- *   60x60,
- *
- *   70x70,
- *
- *   80x80,
- *
- *   InvalidFieldName,
- *
- *   // module name: main
- *
- *   // has Enum.entries
- * }
- */
-@kotlin.Metadata()
-public enum StrangeEnum {
-    InvalidFieldName;
-
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String size = null;
-
-    StrangeEnum(java.lang.String size) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getSize() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<StrangeEnum> getEntries() {
-        return null;
-    }
-}
-
-
-////////////////////
-
-/**
  * public final class Test : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -138,5 +56,87 @@ public final class Test {
 
     public final void strangeFun4(@org.jetbrains.annotations.NotNull() java.lang.String a, @org.jetbrains.annotations.NotNull() java.lang.String p1_949560896) {
     }
+
+}
+
+
+////////////////////
+
+/**
+ * public final enum class StrangeEnum : kotlin/Enum<StrangeEnum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
+ *   private constructor(size: kotlin/String)
+ *
+ *   // field: size:Ljava/lang/String;
+ *   // getter: getSize()Ljava/lang/String;
+ *   public final val size: kotlin/String
+ *     public final get
+ *
+ *   60x60,
+ *
+ *   70x70,
+ *
+ *   80x80,
+ *
+ *   InvalidFieldName,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum StrangeEnum {
+    InvalidFieldName;
+
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String size = null;
+
+    StrangeEnum(java.lang.String size) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSize() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<StrangeEnum> getEntries() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(LStrangeEnum;Ljava/lang/String;Ljava/lang/String;)V
+ *   public constructor(size: StrangeEnum, name: kotlin/String, A B: kotlin/String)
+ *
+ *   // getter: A B()Ljava/lang/String;
+ *   public final val A B: kotlin/String
+ *     public final get
+ *
+ *   // getter: name()Ljava/lang/String;
+ *   public final val name: kotlin/String
+ *     public final get
+ *
+ *   // getter: size()LStrangeEnum;
+ *   public final val size: StrangeEnum
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract StrangeEnum size();
+
+    public abstract java.lang.String name();
 
 }

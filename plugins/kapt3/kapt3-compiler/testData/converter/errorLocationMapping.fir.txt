@@ -1,27 +1,4 @@
 /**
- * public final annotation class Anno : kotlin/Annotation {
- *
- *   // signature: <init>(Lkotlin/reflect/KClass;)V
- *   public constructor(a: kotlin/reflect/KClass<kotlin/Any>)
- *
- *   // getter: a()Ljava/lang/Class;
- *   public final val a: kotlin/reflect/KClass<kotlin/Any>
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Anno {
-
-    public abstract java.lang.Class<java.lang.Object> a();
-}
-
-
-////////////////////
-
-/**
  * public final class ErrorInAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -94,6 +71,46 @@ public final class ErrorInConstructorParameter {
     @org.jetbrains.annotations.NotNull()
     public final java.util.List<ABC> getC() {
         return null;
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final class ErrorInSupertype : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInSupertype implements ABC {
+
+    public ErrorInSupertype() {
+        super();
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final class ErrorInSupertype2 : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInSupertype2 extends ABC<java.lang.String> {
+
+    public ErrorInSupertype2() {
+        super();
     }
 }
 
@@ -255,38 +272,21 @@ public final class ErrorInDeclarations {
 ////////////////////
 
 /**
- * public final class ErrorInSupertype : error/NonExistentClass {
+ * public final annotation class Anno : kotlin/Annotation {
  *
- *   // signature: <init>()V
- *   public constructor()
+ *   // signature: <init>(Lkotlin/reflect/KClass;)V
+ *   public constructor(a: kotlin/reflect/KClass<kotlin/Any>)
  *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class ErrorInSupertype implements ABC {
-
-    public ErrorInSupertype() {
-        super();
-    }
-}
-
-
-////////////////////
-
-/**
- * public final class ErrorInSupertype2 : error/NonExistentClass {
- *
- *   // signature: <init>()V
- *   public constructor()
+ *   // getter: a()Ljava/lang/Class;
+ *   public final val a: kotlin/reflect/KClass<kotlin/Any>
+ *     public final get
  *
  *   // module name: main
  * }
  */
 @kotlin.Metadata()
-public final class ErrorInSupertype2 extends ABC<java.lang.String> {
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
 
-    public ErrorInSupertype2() {
-        super();
-    }
+    public abstract java.lang.Class<java.lang.Object> a();
 }

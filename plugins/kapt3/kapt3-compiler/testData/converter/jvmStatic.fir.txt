@@ -1,55 +1,4 @@
 /**
- * public abstract interface FooComponent : kotlin/Any {
- *
- *   // companion object: Companion
- *
- *   // nested class: Companion
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface FooComponent {
-    @org.jetbrains.annotations.NotNull()
-    public static final FooComponent.Companion Companion = null;
-
-    @kotlin.jvm.JvmStatic()
-    @org.jetbrains.annotations.NotNull()
-    public static java.lang.String create(@org.jetbrains.annotations.NotNull() java.lang.String context) {
-        return null;
-    }
-
-    /**
-     * public final companion object FooComponent.Companion : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   private constructor()
-     *
-     *   // signature: create(Ljava/lang/String;)Ljava/lang/String;
-     *   public final fun create(context: kotlin/String): kotlin/String
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class Companion {
-
-        private Companion() {
-            super();
-        }
-
-        @kotlin.jvm.JvmStatic()
-        @org.jetbrains.annotations.NotNull()
-        public final java.lang.String create(@org.jetbrains.annotations.NotNull() java.lang.String context) {
-            return null;
-        }
-    }
-}
-
-
-////////////////////
-
-/**
  * public final class JvmStaticTest : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -127,6 +76,57 @@ public final class JvmStaticTest {
         @kotlin.jvm.JvmStatic()
         @java.lang.Deprecated()
         public static void getOne$annotations() {
+        }
+    }
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface FooComponent : kotlin/Any {
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface FooComponent {
+    @org.jetbrains.annotations.NotNull()
+    public static final FooComponent.Companion Companion = null;
+
+    @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
+    public static java.lang.String create(@org.jetbrains.annotations.NotNull() java.lang.String context) {
+        return null;
+    }
+
+    /**
+     * public final companion object FooComponent.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: create(Ljava/lang/String;)Ljava/lang/String;
+     *   public final fun create(context: kotlin/String): kotlin/String
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @kotlin.jvm.JvmStatic()
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String create(@org.jetbrains.annotations.NotNull() java.lang.String context) {
+            return null;
         }
     }
 }

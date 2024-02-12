@@ -1,34 +1,4 @@
 /**
- * package {
- *
- *   // field: delegate$delegate:Ljava/lang/Object;
- *   // getter: getDelegate()Ljava/lang/Object;
- *   // setter: setDelegate(Ljava/lang/Object;)V
- *   public final (* delegated *) var delegate: kotlin/Any
- *     public final (* non-default *) get
- *     public final (* non-default *) set(<set-?>: kotlin/Any)
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class AnonymousDelegateKt {
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.Object delegate$delegate = null;
-
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.Object getDelegate() {
-        return null;
-    }
-
-    public static final void setDelegate(@org.jetbrains.annotations.NotNull() java.lang.Object delegate) {
-    }
-}
-
-
-////////////////////
-
-/**
  * public final class ConcreteDelegate : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -128,5 +98,35 @@ public final class Test {
 
     public final int getConcreteDelegate() {
         return 0;
+    }
+}
+
+
+////////////////////
+
+/**
+ * package {
+ *
+ *   // field: delegate$delegate:Ljava/lang/Object;
+ *   // getter: getDelegate()Ljava/lang/Object;
+ *   // setter: setDelegate(Ljava/lang/Object;)V
+ *   public final (* delegated *) var delegate: kotlin/Any
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(<set-?>: kotlin/Any)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class AnonymousDelegateKt {
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.Object delegate$delegate = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.Object getDelegate() {
+        return null;
+    }
+
+    public static final void setDelegate(@org.jetbrains.annotations.NotNull() java.lang.Object delegate) {
     }
 }

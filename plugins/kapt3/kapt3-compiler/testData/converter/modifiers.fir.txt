@@ -1,162 +1,6 @@
 package modifiers;
 
 /**
- * internal final class modifiers/InternalClass : kotlin/Any {
- *
- *   // signature: <init>()V
- *   public constructor()
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class InternalClass {
-
-    public InternalClass() {
-        super();
-    }
-}
-
-
-////////////////////
-
-package modifiers;
-
-/**
- * internal abstract interface modifiers/InternalInterface : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface InternalInterface {
-}
-
-
-////////////////////
-
-package modifiers;
-
-/**
- * public final class modifiers/Modifiers : kotlin/Any {
- *
- *   // signature: <init>()V
- *   public constructor()
- *
- *   // signature: overloads(Ljava/lang/String;I)Ljava/lang/String;
- *   public final fun overloads(a: kotlin/String (* = ... *), n: kotlin/Int (* = ... *)): kotlin/String
- *
- *   // signature: strictFp()V
- *   public final fun strictFp(): kotlin/Unit
- *
- *   // field: transientField:Ljava/lang/String;
- *   // getter: getTransientField()Ljava/lang/String;
- *   public final val transientField: kotlin/String (* = ... *)
- *     public final get
- *
- *   // field: volatileField:Ljava/lang/String;
- *   // getter: getVolatileField()Ljava/lang/String;
- *   // setter: setVolatileField(Ljava/lang/String;)V
- *   public final var volatileField: kotlin/String
- *     public final get
- *     public final set
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class Modifiers {
-    @kotlin.jvm.Transient()
-    @org.jetbrains.annotations.NotNull()
-    private final transient java.lang.String transientField = "";
-
-    @kotlin.jvm.Volatile()
-    @org.jetbrains.annotations.NotNull()
-    private volatile java.lang.String volatileField = "";
-
-    public Modifiers() {
-        super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getTransientField() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getVolatileField() {
-        return null;
-    }
-
-    public final void setVolatileField(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
-    }
-
-    @kotlin.jvm.Strictfp()
-    public final strictfp void strictFp() {
-    }
-
-    @kotlin.jvm.JvmOverloads()
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads() {
-        return null;
-    }
-
-    @kotlin.jvm.JvmOverloads()
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull() java.lang.String a) {
-        return null;
-    }
-
-    @kotlin.jvm.JvmOverloads()
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull() java.lang.String a, int n) {
-        return null;
-    }
-}
-
-
-////////////////////
-
-package modifiers;
-
-/**
- * private final class modifiers/PrivateClass : kotlin/Any {
- *
- *   // signature: <init>()V
- *   public constructor()
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-final class PrivateClass {
-
-    public PrivateClass() {
-        super();
-    }
-}
-
-
-////////////////////
-
-package modifiers;
-
-/**
- * private abstract interface modifiers/PrivateInterface : kotlin/Any {
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-abstract interface PrivateInterface {
-}
-
-
-////////////////////
-
-package modifiers;
-
-/**
  * public final class modifiers/PublicClass : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -169,28 +13,6 @@ package modifiers;
 public final class PublicClass {
 
     public PublicClass() {
-        super();
-    }
-}
-
-
-////////////////////
-
-package modifiers;
-
-/**
- * public abstract class modifiers/PublicClassPrivateConstructor : kotlin/Any {
- *
- *   // signature: <init>()V
- *   private constructor()
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract class PublicClassPrivateConstructor {
-
-    private PublicClassPrivateConstructor() {
         super();
     }
 }
@@ -246,6 +68,72 @@ public class PublicClassProtectedConstructor {
 package modifiers;
 
 /**
+ * public abstract class modifiers/PublicClassPrivateConstructor : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class PublicClassPrivateConstructor {
+
+    private PublicClassPrivateConstructor() {
+        super();
+    }
+}
+
+
+////////////////////
+
+package modifiers;
+
+/**
+ * internal final class modifiers/InternalClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class InternalClass {
+
+    public InternalClass() {
+        super();
+    }
+}
+
+
+////////////////////
+
+package modifiers;
+
+/**
+ * private final class modifiers/PrivateClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+final class PrivateClass {
+
+    public PrivateClass() {
+        super();
+    }
+}
+
+
+////////////////////
+
+package modifiers;
+
+/**
  * public abstract interface modifiers/PublicInterface : kotlin/Any {
  *
  *   // module name: main
@@ -253,6 +141,36 @@ package modifiers;
  */
 @kotlin.Metadata()
 public abstract interface PublicInterface {
+}
+
+
+////////////////////
+
+package modifiers;
+
+/**
+ * internal abstract interface modifiers/InternalInterface : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface InternalInterface {
+}
+
+
+////////////////////
+
+package modifiers;
+
+/**
+ * private abstract interface modifiers/PrivateInterface : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+abstract interface PrivateInterface {
 }
 
 
@@ -347,5 +265,87 @@ public abstract class SealedClass {
         public Four() {
             super();
         }
+    }
+}
+
+
+////////////////////
+
+package modifiers;
+
+/**
+ * public final class modifiers/Modifiers : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: overloads(Ljava/lang/String;I)Ljava/lang/String;
+ *   public final fun overloads(a: kotlin/String (* = ... *), n: kotlin/Int (* = ... *)): kotlin/String
+ *
+ *   // signature: strictFp()V
+ *   public final fun strictFp(): kotlin/Unit
+ *
+ *   // field: transientField:Ljava/lang/String;
+ *   // getter: getTransientField()Ljava/lang/String;
+ *   public final val transientField: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: volatileField:Ljava/lang/String;
+ *   // getter: getVolatileField()Ljava/lang/String;
+ *   // setter: setVolatileField(Ljava/lang/String;)V
+ *   public final var volatileField: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Modifiers {
+    @kotlin.jvm.Transient()
+    @org.jetbrains.annotations.NotNull()
+    private final transient java.lang.String transientField = "";
+
+    @kotlin.jvm.Volatile()
+    @org.jetbrains.annotations.NotNull()
+    private volatile java.lang.String volatileField = "";
+
+    public Modifiers() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getTransientField() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getVolatileField() {
+        return null;
+    }
+
+    public final void setVolatileField(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
+    }
+
+    @kotlin.jvm.Strictfp()
+    public final strictfp void strictFp() {
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull() java.lang.String a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull() java.lang.String a, int n) {
+        return null;
     }
 }

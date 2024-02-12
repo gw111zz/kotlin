@@ -1,4 +1,30 @@
 /**
+ * public abstract interface Intf : kotlin/Any {
+ *
+ *   // signature: bar(I)Ljava/lang/String;
+ *   public open fun bar(bcd: kotlin/Int): kotlin/String
+ *
+ *   // signature: foo(Ljava/lang/String;)V
+ *   public abstract fun foo(abc: kotlin/String): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Intf {
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
+
+    @org.jetbrains.annotations.NotNull()
+    public default java.lang.String bar(int bcd) {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
  * public abstract class Cls : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -24,32 +50,6 @@ public abstract class Cls {
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String bar(int bcd) {
-        return null;
-    }
-}
-
-
-////////////////////
-
-/**
- * public abstract interface Intf : kotlin/Any {
- *
- *   // signature: bar(I)Ljava/lang/String;
- *   public open fun bar(bcd: kotlin/Int): kotlin/String
- *
- *   // signature: foo(Ljava/lang/String;)V
- *   public abstract fun foo(abc: kotlin/String): kotlin/Unit
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public abstract interface Intf {
-
-    public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
-
-    @org.jetbrains.annotations.NotNull()
-    public default java.lang.String bar(int bcd) {
         return null;
     }
 }

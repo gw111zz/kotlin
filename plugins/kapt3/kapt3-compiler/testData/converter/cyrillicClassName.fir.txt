@@ -1,24 +1,4 @@
 /**
- * public final class République : kotlin/Any {
- *
- *   // signature: <init>()V
- *   public constructor()
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class République {
-
-    public République() {
-        super();
-    }
-}
-
-
-////////////////////
-
-/**
  * public final class Привет : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -31,6 +11,26 @@ public final class République {
 public final class Привет {
 
     public Привет() {
+        super();
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final class République : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class République {
+
+    public République() {
         super();
     }
 }

@@ -1,6 +1,133 @@
 package app;
 
 /**
+ * public final annotation class app/Bind : kotlin/Annotation {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(id: kotlin/Int)
+ *
+ *   // getter: id()I
+ *   public final val id: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Bind {
+
+    public abstract int id();
+}
+
+
+////////////////////
+
+package app;
+
+/**
+ * public final annotation class app/MultiValue : kotlin/Annotation {
+ *
+ *   // signature: <init>([I)V
+ *   public constructor(ids: kotlin/IntArray)
+ *
+ *   // getter: ids()[I
+ *   public final val ids: kotlin/IntArray
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValue {
+
+    public abstract int[] ids();
+}
+
+
+////////////////////
+
+package app;
+
+/**
+ * public final annotation class app/MultiValueString : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(ids: kotlin/Array<kotlin/String>)
+ *
+ *   // getter: ids()[Ljava/lang/String;
+ *   public final val ids: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValueString {
+
+    public abstract java.lang.String[] ids();
+}
+
+
+////////////////////
+
+package app;
+
+/**
+ * public final annotation class app/MultiValueByte : kotlin/Annotation {
+ *
+ *   // signature: <init>([B)V
+ *   public constructor(ids: kotlin/ByteArray)
+ *
+ *   // getter: ids()[B
+ *   public final val ids: kotlin/ByteArray
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValueByte {
+
+    public abstract byte[] ids();
+}
+
+
+////////////////////
+
+package app;
+
+/**
+ * public final annotation class app/BindField : kotlin/Annotation {
+ *
+ *   // signature: <init>(I)V
+ *   public constructor(id: kotlin/Int)
+ *
+ *   // getter: id()I
+ *   public final val id: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface BindField {
+
+    public abstract int id();
+}
+
+
+////////////////////
+
+package app;
+
+/**
  * public final annotation class app/Anno : kotlin/Annotation {
  *
  *   // signature: <init>(ZBISJCFDLjava/lang/String;)V
@@ -66,178 +193,6 @@ public abstract @interface Anno {
     public abstract double a8();
 
     public abstract java.lang.String a9();
-}
-
-
-////////////////////
-
-package app;
-
-/**
- * public final annotation class app/Bind : kotlin/Annotation {
- *
- *   // signature: <init>(I)V
- *   public constructor(id: kotlin/Int)
- *
- *   // getter: id()I
- *   public final val id: kotlin/Int
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface Bind {
-
-    public abstract int id();
-}
-
-
-////////////////////
-
-package app;
-
-/**
- * public final annotation class app/BindField : kotlin/Annotation {
- *
- *   // signature: <init>(I)V
- *   public constructor(id: kotlin/Int)
- *
- *   // getter: id()I
- *   public final val id: kotlin/Int
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface BindField {
-
-    public abstract int id();
-}
-
-
-////////////////////
-
-package app;
-
-/**
- * public final object app/JJ : kotlin/Any {
- *
- *   // signature: <init>()V
- *   private constructor()
- *
- *   // signature: c()Ljava/lang/String;
- *   public final fun c(): kotlin/String
- *
- *   // field: b:Ljava/lang/String;
- *   // getter: getB()Ljava/lang/String;
- *   public final val b: kotlin/String
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class JJ {
-    @org.jetbrains.annotations.NotNull()
-    public static final app.JJ INSTANCE = null;
-
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String b = null;
-
-    private JJ() {
-        super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getB() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String c() {
-        return null;
-    }
-}
-
-
-////////////////////
-
-package app;
-
-/**
- * public final annotation class app/MultiValue : kotlin/Annotation {
- *
- *   // signature: <init>([I)V
- *   public constructor(ids: kotlin/IntArray)
- *
- *   // getter: ids()[I
- *   public final val ids: kotlin/IntArray
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MultiValue {
-
-    public abstract int[] ids();
-}
-
-
-////////////////////
-
-package app;
-
-/**
- * public final annotation class app/MultiValueByte : kotlin/Annotation {
- *
- *   // signature: <init>([B)V
- *   public constructor(ids: kotlin/ByteArray)
- *
- *   // getter: ids()[B
- *   public final val ids: kotlin/ByteArray
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MultiValueByte {
-
-    public abstract byte[] ids();
-}
-
-
-////////////////////
-
-package app;
-
-/**
- * public final annotation class app/MultiValueString : kotlin/Annotation {
- *
- *   // signature: <init>(Lkotlin/Array;)V
- *   public constructor(ids: kotlin/Array<kotlin/String>)
- *
- *   // getter: ids()[Ljava/lang/String;
- *   public final val ids: kotlin/Array<kotlin/String>
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-public abstract @interface MultiValueString {
-
-    public abstract java.lang.String[] ids();
 }
 
 
@@ -525,5 +480,50 @@ public final class MyActivity {
 
     public final int getPropF() {
         return 0;
+    }
+}
+
+
+////////////////////
+
+package app;
+
+/**
+ * public final object app/JJ : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // signature: c()Ljava/lang/String;
+ *   public final fun c(): kotlin/String
+ *
+ *   // field: b:Ljava/lang/String;
+ *   // getter: getB()Ljava/lang/String;
+ *   public final val b: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class JJ {
+    @org.jetbrains.annotations.NotNull()
+    public static final app.JJ INSTANCE = null;
+
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String b = null;
+
+    private JJ() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String c() {
+        return null;
     }
 }

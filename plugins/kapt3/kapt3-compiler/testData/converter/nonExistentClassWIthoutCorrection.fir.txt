@@ -1,26 +1,4 @@
 /**
- * package {
- *
- *   public typealias Coocoo = error/NonExistentClass (* = error/NonExistentClass *)
- *
- *   public typealias Coocoo2<T#0 (* T *)> = error/NonExistentClass (* = error/NonExistentClass *)
- *
- *   public typealias Coocoo3<T#0 (* X *)> = error/NonExistentClass (* = error/NonExistentClass *)
- *
- *   public typealias String2 = kotlin/String (* = kotlin/String *)
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
-public final class NonExistentClassWIthoutCorrectionKt {
-}
-
-
-////////////////////
-
-/**
  * public final object NonExistentType : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -207,4 +185,26 @@ public final class NonExistentType {
     public final ABCDEF b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
         return null;
     }
+}
+
+
+////////////////////
+
+/**
+ * package {
+ *
+ *   public typealias Coocoo = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias Coocoo2<T#0 (* T *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias Coocoo3<T#0 (* X *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias String2 = kotlin/String (* = kotlin/String *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class NonExistentClassWIthoutCorrectionKt {
 }

@@ -1,47 +1,4 @@
 /**
- * public final object Boo : kotlin/Any {
- *
- *   // signature: <init>()V
- *   private constructor()
- *
- *   // signature: foo()Ljava/lang/String;
- *   public final fun foo(): kotlin/String
- *
- *   // field: z:Ljava/lang/String;
- *   // getter: getZ()Ljava/lang/String;
- *   public final val z: kotlin/String
- *     public final get
- *
- *   // module name: main
- * }
- */
-@kotlin.Metadata()
-public final class Boo {
-    @org.jetbrains.annotations.NotNull()
-    public static final Boo INSTANCE = null;
-
-    @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String z = null;
-
-    private Boo() {
-        super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getZ() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String foo() {
-        return null;
-    }
-}
-
-
-////////////////////
-
-/**
  * public final object Foo : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -223,6 +180,49 @@ public final class Foo {
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getK() {
+        return null;
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final object Boo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // signature: foo()Ljava/lang/String;
+ *   public final fun foo(): kotlin/String
+ *
+ *   // field: z:Ljava/lang/String;
+ *   // getter: getZ()Ljava/lang/String;
+ *   public final val z: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Boo {
+    @org.jetbrains.annotations.NotNull()
+    public static final Boo INSTANCE = null;
+
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String z = null;
+
+    private Boo() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getZ() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String foo() {
         return null;
     }
 }
