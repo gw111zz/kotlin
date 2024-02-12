@@ -13,6 +13,7 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks.Backend
 import org.jetbrains.jps.builders.storage.BuildDataPaths
+import org.jetbrains.jps.dependency.java.LookupNameUsage
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsSdkDependency
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.build.JvmBuildMetaInfo
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -369,6 +371,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val inlineConstTracker = environment.services[InlineConstTracker::class.java] as InlineConstTrackerImpl
         val enumWhenTracker = environment.services[EnumWhenTracker::class.java] as EnumWhenTrackerImpl
         val importTracker = environment.services[ImportTracker::class.java] as ImportTrackerImpl
+        val lookupTracker = environment.services[LookupTracker::class.java] as LookupTrackerImpl
 
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
@@ -377,15 +380,14 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             files
         }
 
+        val isGraphJpsImplementation = previousMappings == null
+
         fun getOldSourceFiles(target: ModuleBuildTarget, generatedClass: GeneratedJvmClass): Set<File> {
             val cache = incrementalCaches[kotlinContext.targetsBinding[target]] ?: return emptySet()
             cache as JpsIncrementalJvmCache
 
             val className = generatedClass.outputClass.className
             if (!cache.isMultifileFacade(className)) return emptySet()
-
-            // In case of graph implementation of JPS
-            if (previousMappings == null) return emptySet()
 
             val name = previousMappings.getName(className.internalName)
             return previousMappings.getClassSources(name).toSet()
@@ -396,8 +398,10 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 if (output !is GeneratedJvmClass) continue
 
                 val sourceFiles = FileCollectionFactory.createCanonicalFileSet()
-                sourceFiles.addAll(getOldSourceFiles(target, output))
-                sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
+                if (!isGraphJpsImplementation) {
+                    sourceFiles.addAll(getOldSourceFiles(target, output))
+                    sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
+                }
                 sourceFiles.addAll(output.sourceFiles)
 
                 // process trackers
@@ -412,6 +416,9 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                     ClassReader(output.outputClass.fileContents)
                 )
             }
+        }
+        if (isGraphJpsImplementation) {
+            processLookupTracker(lookupTracker, callback, environment.messageCollector)
         }
 
         val allCompiled = dirtyFilesHolder.allDirtyFiles
@@ -446,5 +453,26 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         if (enumFqNameClasses == null && importedFqNames == null) return
 
         callback.registerImports(output.outputClass.className.internalName, importedFqNames ?: listOf(), enumFqNameClasses ?: listOf())
+    }
+
+    private fun processLookupTracker(lookupTracker: LookupTrackerImpl, callback: Backend, messageCollector: MessageCollector) {
+        try {
+            // kotlin plugin can be used with older versions of jps-build, so we check for the availability of new APIs
+            LookupNameUsage("scopeFqName", "symbolName")
+        } catch (_: Throwable) {
+            messageCollector.report(
+                CompilerMessageSeverity.WARNING,
+                "Can't register lookup usages with this version of JPS. Kotlin incremental compilation might be incorrect. Consider using build option -Djps.use.dependency.graph=false")
+            return
+        }
+
+        for ((lookupKey, fileList) in lookupTracker.lookups.entrySet()) {
+            val symbolOwner = lookupKey.scope.replace('.', '/')
+            val symbolName = lookupKey.name
+            val usage = LookupNameUsage(symbolOwner, symbolName)
+            for (file in fileList) {
+                callback.registerUsage(Paths.get(file), usage)
+            }
+        }
     }
 }
