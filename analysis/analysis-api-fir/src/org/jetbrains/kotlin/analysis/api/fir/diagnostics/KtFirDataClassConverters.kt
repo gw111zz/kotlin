@@ -5766,12 +5766,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
-        ExternalClassConstructorPropertyParameterImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirWebCommonErrors.EXTERNAL_ANONYMOUS_INITIALIZER) { firDiagnostic ->
         ExternalAnonymousInitializerImpl(
             firDiagnostic as KtPsiDiagnostic,
