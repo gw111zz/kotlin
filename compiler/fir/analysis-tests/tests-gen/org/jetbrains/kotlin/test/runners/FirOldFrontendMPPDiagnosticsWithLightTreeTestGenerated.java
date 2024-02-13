@@ -2031,6 +2031,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("funInterfaceDiagnostics.kt")
+        public void testFunInterfaceDiagnostics() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/funInterfaceDiagnostics.kt");
+        }
+
+        @Test
         @TestMetadata("implicitActualFakeOverride_AbstractMap.kt")
         public void testImplicitActualFakeOverride_AbstractMap() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/implicitActualFakeOverride_AbstractMap.kt");
@@ -2076,6 +2082,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         @TestMetadata("scopeOfFunInterface.kt")
         public void testScopeOfFunInterface() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/scopeOfFunInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("scopeOfFunInterfaceJK.kt")
+        public void testScopeOfFunInterfaceJK() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/scopes/scopeOfFunInterfaceJK.kt");
         }
     }
 
