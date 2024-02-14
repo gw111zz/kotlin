@@ -384,10 +384,10 @@ private class StubGenerator(
                     pushIndent()
 
                     if (method.isConstructor && !psiClass.isEnum) {
-                        val superConstructor = method.containingClass?.superClass?.constructors?.firstOrNull { !it.isPrivate }
-                        if (superConstructor != null) {
-                            print("super(")
-                            val args = superConstructor.parameterList.parameters.map { defaultValue(it.type) }
+                        val delegateTo = (if (psiClass.isRecord) psiClass else psiClass.superClass)?.constructors?.firstOrNull { !it.isPrivate }
+                        if (delegateTo != null) {
+                            print(if (psiClass.isRecord) "this(" else "super(")
+                            val args = delegateTo.parameterList.parameters.map { defaultValue(it.type) }
                             args.forEachIndexed { index, arg ->
                                 if (index > 0) printWithNoIndent(", ")
                                 printWithNoIndent(arg)

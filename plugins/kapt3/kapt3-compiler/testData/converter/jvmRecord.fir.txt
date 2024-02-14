@@ -112,7 +112,7 @@ public record R<T extends java.lang.Object>(@A() int x, T y) implements I {
     }
 
     public R(T y) {
-        super();
+        this(0, null);
     }
 
     @java.lang.Override()
