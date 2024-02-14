@@ -73,7 +73,7 @@ class CleanableSoftValueCache<K : Any, V : Any>(
     /**
      * Returns a value for the given [key] if it exists in the map. Must be called from a read action.
      */
-    fun get(key: K): V? = backingMap[key]?.get()
+    operator fun get(key: K): V? = backingMap[key]?.get()
 
     /**
      * If [key] is currently absent, attempts to add a value computed by [computeValue] to the cache. [computeValue] is invoked exactly once
