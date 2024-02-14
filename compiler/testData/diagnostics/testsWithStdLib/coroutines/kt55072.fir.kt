@@ -14,8 +14,8 @@ class Player
                 pumpEvents()
             }
             <!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> {
-                pumpEvents()
-            }
+            pumpEvents()
+        }
             run {
                 <!ILLEGAL_SUSPEND_FUNCTION_CALL!>pumpEvents<!>()
             }

@@ -35,7 +35,7 @@ fun bar() {
 
     val w: (suspend () -> Int) -> Any? = ::suspend
 
-    A().<!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
+    A().suspend {
         println()
     }
 
@@ -50,7 +50,7 @@ fun bar() {
     }
 
     with(A()) {
-        <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
+        suspend {
             println()
         }
 
@@ -65,7 +65,7 @@ fun bar() {
         }
     }
 
-    A() <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
+    A() suspend {
         println()
     }
 

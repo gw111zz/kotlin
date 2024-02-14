@@ -26,8 +26,8 @@ fun test() {
             println("")
         }
         synchronized(<!NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND!>suspend<!> { getLock() } ()) {
-            println("")
-        }
+        println("")
+    }
         synchronized(run { getLock() }) {
             println("")
         }
