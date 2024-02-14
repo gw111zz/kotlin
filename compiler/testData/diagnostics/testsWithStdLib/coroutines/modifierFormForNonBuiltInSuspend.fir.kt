@@ -11,15 +11,15 @@ class A {
 annotation class Ann
 
 fun bar() {
-    suspend {
+    <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }
 
-    @Ann suspend {
+    @Ann <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }
 
-    suspend @Ann {
+    <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> @Ann {
         println()
     }
 
@@ -35,7 +35,7 @@ fun bar() {
 
     val w: (suspend () -> Int) -> Any? = ::suspend
 
-    A().suspend {
+    A().<!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }
 
@@ -50,7 +50,7 @@ fun bar() {
     }
 
     with(A()) {
-        suspend {
+        <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
             println()
         }
 
@@ -65,7 +65,7 @@ fun bar() {
         }
     }
 
-    A() suspend {
+    A() <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
         println()
     }
 
