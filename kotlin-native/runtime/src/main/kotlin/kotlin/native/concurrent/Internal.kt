@@ -6,14 +6,10 @@
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.DescribeObjectForDebugging
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.InternalForKotlinNative
-import kotlin.native.internal.debugDescription
 import kotlin.native.identityHashCode
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
+import kotlin.native.internal.*
 
 @GCUnsafeCall("Kotlin_Any_isShareable")
 @FreezingIsDeprecated
@@ -46,6 +42,7 @@ internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any
 
 @GCUnsafeCall("Kotlin_Worker_startInternal")
 @ObsoleteWorkersApi
+@Escapes(0b10) // name is stored in the Worker instance.
 external internal fun startInternal(errorReporting: Boolean, name: String?): Int
 
 @GCUnsafeCall("Kotlin_Worker_currentInternal")
@@ -63,6 +60,7 @@ external internal fun executeInternal(
 
 @GCUnsafeCall("Kotlin_Worker_executeAfterInternal")
 @ObsoleteWorkersApi
+@Escapes(0b10) // operation escapes into stable ref.
 external internal fun executeAfterInternal(id: Int, operation: () -> Unit, afterMicroseconds: Long): Unit
 
 @GCUnsafeCall("Kotlin_Worker_processQueueInternal")
