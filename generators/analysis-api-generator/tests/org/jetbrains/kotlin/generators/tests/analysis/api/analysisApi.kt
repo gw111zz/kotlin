@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
@@ -579,6 +580,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             ) {
                 model(it, "combinedDeclaredMemberScope")
             }
+        }
+    }
+
+    // Avoid Standalone mode because of KT-65813.
+    component("visibilityChecker", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Ide)) {
+        test(AbstractVisibilityCheckerTest::class) {
+            model(it, "visibility")
         }
     }
 }
