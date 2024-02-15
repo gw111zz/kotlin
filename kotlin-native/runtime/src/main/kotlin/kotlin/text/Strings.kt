@@ -393,7 +393,8 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  *  or when that index is out of the [destination] array indices range.
  */
-@ExperimentalStdlibApi
+@WasExperimental(ExperimentalStdlibApi::class)
+// TODO: Should be @SinceKotlin("2.0"), see KT-64904
 @SinceKotlin("1.9")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(

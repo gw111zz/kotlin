@@ -1042,7 +1042,7 @@ public fun kotlin.String.toByteOrNull(radix: kotlin.Int): kotlin.Byte?
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.String.toCharArray(): kotlin.CharArray
 
-@kotlin.ExperimentalStdlibApi
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.SinceKotlin(version = "1.9")
 public fun kotlin.String.toCharArray(destination: kotlin.CharArray, destinationOffset: kotlin.Int = ..., startIndex: kotlin.Int = ..., endIndex: kotlin.Int = ...): kotlin.CharArray
 
