@@ -1,7 +1,7 @@
-@file:OptIn(ComposeKotlinGradlePluginApi::class)
+@file:OptIn(InternalKotlinGradlePluginApi::class)
 
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
@@ -23,7 +23,7 @@ repositories {
 }
 
 kotlin {
-    val publication = project.ext.get(
+    val publication = kotlin.ext.get(
         KotlinTargetResourcesPublication.EXTENSION_NAME
     ) as KotlinTargetResourcesPublication
 
@@ -37,7 +37,7 @@ kotlin {
         jvm(),
     ).forEach { target ->
         val fontsFilter = if (target is KotlinAndroidTarget) listOf("fonts/*") else emptyList()
-        val relativeResourcePlacement = provider { File("embed/published") }
+        val relativeResourcePlacement = provider { File("embed/subproject") }
         val sourceSetPathProvider: (KotlinSourceSet) -> (Provider<File>) = { sourceSet ->
             project.provider { project.file("src/${sourceSet.name}/multiplatformResources") }
         }
@@ -46,7 +46,7 @@ kotlin {
             target = target,
             resourcePathForSourceSet = { sourceSet ->
                 KotlinTargetResourcesPublication.ResourceRoot(
-                    resourcesBaseDirectory = project.provider { project.file("src/${sourceSet.name}/multiplatformResources") },
+                    absolutePath = sourceSetPathProvider(sourceSet),
                     includes = emptyList(),
                     excludes = fontsFilter,
                 )
@@ -76,7 +76,7 @@ publishing {
 }
 
 android {
-    namespace = "test.publication"
+    namespace = "test.projectDependency"
     compileSdk = 34
     defaultConfig {
         minSdk = 24
