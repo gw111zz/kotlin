@@ -1295,6 +1295,10 @@ class ControlFlowGraphBuilder {
         }
     }
 
+    fun exitCallExplicitReceiver() {
+        exitFunctionCallArgumentsNodes.top()?.nodeForCalleeResolution = lastNode
+    }
+
     fun exitCallArguments(): Pair<SplitPostponedLambdasNode?, FunctionCallArgumentsExitNode?> {
         val splitNode = argumentListSplitNodes.pop()?.also { addNewSimpleNode(it) }
         val exitNode = exitFunctionCallArgumentsNodes.pop()?.also { addNewSimpleNode(it) }

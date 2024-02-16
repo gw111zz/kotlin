@@ -914,17 +914,21 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterCallArguments(call, lambdas)?.mergeIncomingFlow()
     }
 
+    fun exitCallExplicitReceiver() {
+        graphBuilder.exitCallExplicitReceiver()
+    }
+
     fun exitCallArguments() {
         val (splitNode, exitNode) = graphBuilder.exitCallArguments()
         splitNode?.mergeIncomingFlow()
 
         if (exitNode != null) {
             exitNode.mergeIncomingFlow()
-
-            // Reset implicit receivers back to their state *before* call arguments as tower resolve will use receiver types to lookup
-            // functions after call arguments have been processed.
-            // TODO(KT-64094): Consider moving logic to tower resolution instead.
-            resetSmartCastPositionTo(exitNode.enterNode.flow)
+            // Temporarily reset smart cast state to before value arguments (but after the explicit receiver, if any)
+            // so that smart casts in them are not used for tower resolution:
+            //    fun Any.bar() = foo(this as C) // <- do not smart-cast `this` to C when looking up `foo`
+            // Exiting the call will reset the state back, so smart cast will work as normal after the call is resolved.
+            resetSmartCastPositionTo(exitNode.nodeForCalleeResolution.flow)
         }
     }
 
