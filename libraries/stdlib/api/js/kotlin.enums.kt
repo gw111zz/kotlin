@@ -1,4 +1,4 @@
-@kotlin.ExperimentalStdlibApi
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.SinceKotlin(version = "1.9")
 public inline fun <reified T : kotlin.Enum<T>> enumEntries(): kotlin.enums.EnumEntries<T>
 
