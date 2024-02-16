@@ -219,8 +219,9 @@ abstract class KtCodeFragment(
     companion object {
         const val IMPORT_SEPARATOR: String = ","
 
+        @Suppress("UnstableApiUsage")
         val IMPORT_MODIFICATION: Topic<KotlinCodeFragmentImportModificationListener> =
-            Topic(KotlinCodeFragmentImportModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN)
+            Topic(KotlinCodeFragmentImportModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
         val FAKE_CONTEXT_FOR_JAVA_FILE: Key<Function0<KtElement>> = Key.create("FAKE_CONTEXT_FOR_JAVA_FILE")
 
