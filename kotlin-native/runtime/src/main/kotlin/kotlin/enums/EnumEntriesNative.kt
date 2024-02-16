@@ -8,7 +8,7 @@ package kotlin.enums
 import kotlin.native.internal.*
 
 @SinceKotlin("1.9")
-@ExperimentalStdlibApi
+//@ExperimentalStdlibApi
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.ENUM_ENTRIES)
 internal actual external inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
