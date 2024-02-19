@@ -17,6 +17,6 @@ enum class BuildReportType : Serializable {
     ;
 
     companion object {
-        const val serialVersionUID: Long = 2L
+        const val serialVersionUID: Long = 3L
     }
 }
