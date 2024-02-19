@@ -54,4 +54,4 @@ external fun foo1(): Int
 
 
 // Property parameters
-external class C(x: Int, <!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val y: String<!>)
+external class C(x: Int, val y: String)
