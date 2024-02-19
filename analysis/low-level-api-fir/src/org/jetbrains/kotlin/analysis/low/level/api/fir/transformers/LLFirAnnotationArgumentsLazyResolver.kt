@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.AnnotationVisitorVoid
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationAreResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationsAreResolved
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -43,9 +44,7 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                     checkAnnotationsAreResolved(target, receiverParameter.typeRef)
                 }
 
-                for (contextReceiver in target.contextReceivers) {
-                    checkAnnotationsAreResolved(target, contextReceiver.typeRef)
-                }
+                target.contextReceivers.checkAnnotationAreResolved(target)
             }
 
             is FirTypeParameter -> {
@@ -54,15 +53,16 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                 }
             }
 
-            is FirClass -> {
+            is FirRegularClass -> {
                 for (typeRef in target.superTypeRefs) {
                     checkAnnotationsAreResolved(target, typeRef)
                 }
+
+                target.contextReceivers.checkAnnotationAreResolved(target)
             }
 
-            is FirTypeAlias -> {
-                checkAnnotationsAreResolved(target, target.expandedTypeRef)
-            }
+            is FirScript -> target.contextReceivers.checkAnnotationAreResolved(target)
+            is FirTypeAlias -> checkAnnotationsAreResolved(target, target.expandedTypeRef)
         }
     }
 }

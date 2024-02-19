@@ -214,6 +214,12 @@ internal fun checkAnnotationsAreResolved(owner: FirAnnotationContainer, typeRef:
     typeRef.accept(AnnotationChecker, owner)
 }
 
+internal fun List<FirContextReceiver>.checkAnnotationAreResolved(owner: FirDeclaration) {
+    for (contextReceiver in this) {
+        checkAnnotationsAreResolved(owner, contextReceiver.typeRef)
+    }
+}
+
 internal fun FirAbstractBodyResolveTransformerDispatcher.checkAnnotationCallIsResolved(
     symbol: FirBasedSymbol<*>,
     annotationCall: FirAnnotationCall,
