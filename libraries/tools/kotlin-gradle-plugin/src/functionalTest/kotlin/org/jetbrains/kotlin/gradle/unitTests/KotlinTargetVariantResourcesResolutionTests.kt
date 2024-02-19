@@ -111,7 +111,7 @@ class KotlinTargetVariantResourcesResolutionTests {
                     it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
                 }.toSet()
             },
-            expectedResult = { consumer, producer ->
+            expectedResult = { _, producer ->
                 hashSetOf(
                     producer.buildFile(
                         "kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"
@@ -132,7 +132,7 @@ class KotlinTargetVariantResourcesResolutionTests {
                     it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
                 }.toSet()
             },
-            expectedResult = { consumer, producer ->
+            expectedResult = { _, producer ->
                 hashSetOf(
                     producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmWasi/producer.kotlin_resources.zip"),
                 )
