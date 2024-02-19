@@ -50,6 +50,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = declaration
         parent(declaration)
         parent(named)
+
+        visitorParameterName = "declaration"
     }
 
     val enum: Element by element {

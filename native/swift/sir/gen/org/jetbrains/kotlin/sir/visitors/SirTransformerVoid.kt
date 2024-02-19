@@ -38,11 +38,11 @@ abstract class SirTransformerVoid : SirTransformer<Nothing?>() {
     final override fun transformDeclaration(declaration: SirDeclaration, data: Nothing?): SirDeclaration =
         transformDeclaration(declaration)
 
-    open fun transformNamedDeclaration(namedDeclaration: SirNamedDeclaration): SirDeclaration =
-        transformDeclaration(namedDeclaration)
+    open fun transformNamedDeclaration(declaration: SirNamedDeclaration): SirDeclaration =
+        transformDeclaration(declaration)
 
-    final override fun transformNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: Nothing?): SirDeclaration =
-        transformNamedDeclaration(namedDeclaration)
+    final override fun transformNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?): SirDeclaration =
+        transformNamedDeclaration(declaration)
 
     open fun transformEnum(enum: SirEnum): SirDeclaration =
         transformNamedDeclaration(enum)

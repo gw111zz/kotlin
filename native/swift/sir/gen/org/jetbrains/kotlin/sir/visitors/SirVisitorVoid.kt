@@ -46,12 +46,12 @@ abstract class SirVisitorVoid : SirVisitor<Unit, Nothing?>() {
         visitElement(declaration)
     }
 
-    final override fun visitNamedDeclaration(namedDeclaration: SirNamedDeclaration, data: Nothing?) {
-        visitNamedDeclaration(namedDeclaration)
+    final override fun visitNamedDeclaration(declaration: SirNamedDeclaration, data: Nothing?) {
+        visitNamedDeclaration(declaration)
     }
 
-    open fun visitNamedDeclaration(namedDeclaration: SirNamedDeclaration) {
-        visitDeclaration(namedDeclaration)
+    open fun visitNamedDeclaration(declaration: SirNamedDeclaration) {
+        visitDeclaration(declaration)
     }
 
     final override fun visitEnum(enum: SirEnum, data: Nothing?) {
