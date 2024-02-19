@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetReso
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectoriesIgnoringDotFiles
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.name
@@ -71,10 +72,10 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
             val resolvableTargets = listOf(
                 "linuxX64",
-                "iosArm64",
                 "wasmJs",
                 "wasmWasi",
-            )
+            ) + if (HostManager.hostIsMac) listOf("iosArm64") else emptyList()
+
             resolvableTargets.forEach { target ->
                 buildWithAGPVersion(
                     ":${target}ResolveResources", "-Pkotlin.mpp.resourcesResolutionStrategy_wip=${resolutionStrategy.propertyName}",
@@ -91,7 +92,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
             // This platform is not provided in dependency variants
             buildAndFailWithAGPVersion(
-                ":iosSimulatorArm64",
+                ":linuxArm64",
                 androidVersion = androidVersion,
                 defaultBuildOptions = defaultBuildOptions,
             )
