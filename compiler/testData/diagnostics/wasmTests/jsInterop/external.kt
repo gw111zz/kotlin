@@ -18,9 +18,9 @@ external class C5 {
     inner class <!WRONG_EXTERNAL_DECLARATION!>C7<!>
 }
 
-external inline class <!WRONG_EXTERNAL_DECLARATION!>C8(<!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val x: Int<!>)<!>
+external inline class <!WRONG_EXTERNAL_DECLARATION!>C8(val x: Int)<!>
 
-external value class <!WRONG_EXTERNAL_DECLARATION!>C9(<!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val x: Int<!>)<!>
+external value class <!WRONG_EXTERNAL_DECLARATION!>C9(val x: Int)<!>
 
 
 // Interfaces
