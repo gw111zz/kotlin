@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
-import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
@@ -48,13 +47,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         testServices: TestServices,
         firResolveSession: LLFirResolveSession,
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
-        Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives -> {
-            val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
-            annotationContainer to fun(phase: FirResolvePhase) {
-                annotationContainer.lazyResolveToPhase(phase)
-            }
-        }
-        Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {
+        Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives || Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {
             val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             file to fun(phase: FirResolvePhase) {
@@ -198,7 +191,6 @@ internal fun lazyResolveRenderer(builder: StringBuilder): FirRenderer = FirRende
     declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
     resolvePhaseRenderer = FirResolvePhaseRenderer(),
     errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
-    fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
 )
 
 internal operator fun List<FirFile>.contains(element: FirElementWithResolveState): Boolean = if (element is FirFile) {

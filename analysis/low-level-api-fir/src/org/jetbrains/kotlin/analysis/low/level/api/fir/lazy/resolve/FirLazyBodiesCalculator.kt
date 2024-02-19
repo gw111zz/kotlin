@@ -627,7 +627,6 @@ private object FirAllLazyAnnotationCalculatorVisitor : FirLazyAnnotationVisitor(
     override fun visitFile(file: FirFile, data: FirSession) {
         super.visitFile(file, data)
 
-        file.annotationsContainer?.accept(this, data)
         file.forEachDeclaration { it.accept(this, data) }
     }
 

@@ -1194,19 +1194,11 @@ open class PsiRawFirBuilder(
                     packageFqName = context.packageFqName
                     source = file.packageDirective?.toKtPsiSourceElement()
                 }
-                annotationsContainer = file.fileAnnotationList?.let {
-                    buildFileAnnotationsContainer {
-                        moduleData = baseModuleData
-                        containingFileSymbol = this@buildFile.symbol
-                        source = it.toKtPsiSourceElement()
-                        withContainerSymbol(containingFileSymbol) {
-                            for (annotationEntry in it.annotationEntries) {
-                                annotations += annotationEntry.convert<FirAnnotation>()
-                            }
-                        }
 
-                        annotations.ifEmpty {
-                            resolvePhase = FirResolvePhase.BODY_RESOLVE
+                file.fileAnnotationList?.let {
+                    withContainerSymbol(symbol) {
+                        for (annotationEntry in it.annotationEntries) {
+                            annotations += annotationEntry.convert<FirAnnotation>()
                         }
                     }
                 }

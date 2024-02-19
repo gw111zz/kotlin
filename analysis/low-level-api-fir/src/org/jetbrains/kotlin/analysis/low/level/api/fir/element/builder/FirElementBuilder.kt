@@ -71,6 +71,7 @@ internal class FirElementBuilder(
 
     fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
         is KtImportList -> false
+        is KtFileAnnotationList -> false
         else -> true
     }
 
@@ -186,7 +187,6 @@ internal class FirElementBuilder(
 
             when (anchor) {
                 is KtPackageDirective -> declaration.packageDirective
-                is KtFileAnnotationList -> declaration.annotationsContainer?.also { it.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS) }
                 is KtImportDirective -> {
                     declaration.lazyResolveToPhase(FirResolvePhase.IMPORTS)
                     declaration.imports.find { it.psi == anchor }
@@ -199,11 +199,6 @@ internal class FirElementBuilder(
     )
 
     private fun KtElement.fileHeaderAnchorElement(): KtElement? {
-        /**
-         * File annotations already covered by [getFirForElementInsideAnnotations], but we have to cover the list itself
-         */
-        if (this is KtFileAnnotationList) return this
-
         return parentsWithSelf.find { it is KtPackageDirective || it is KtImportDirective } as? KtElement
     }
 
