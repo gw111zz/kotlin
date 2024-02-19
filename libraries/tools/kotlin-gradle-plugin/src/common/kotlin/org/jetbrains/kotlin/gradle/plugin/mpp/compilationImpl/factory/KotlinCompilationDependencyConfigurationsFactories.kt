@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompi
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_PATH
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
@@ -46,6 +47,7 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
             naming = naming,
             withRuntime = false,
             withHostSpecificMetadata = true,
+            withResources = true,
             compileClasspathConfigurationName = naming.name("compileKlibraries")
         )
     }
@@ -85,7 +87,7 @@ private const val compileClasspath = "compileClasspath"
 private const val runtimeClasspath = "runtimeClasspath"
 
 private fun KotlinCompilationDependencyConfigurationsContainer(
-    target: KotlinTarget, compilationName: String, withRuntime: Boolean, withHostSpecificMetadata: Boolean = false,
+    target: KotlinTarget, compilationName: String, withRuntime: Boolean, withHostSpecificMetadata: Boolean = false, withResources: Boolean = false,
     naming: ConfigurationNaming = ConfigurationNaming.Default(target, compilationName),
     apiConfigurationName: String = naming.name(compilation, API),
     implementationConfigurationName: String = naming.name(compilation, IMPLEMENTATION),
@@ -98,7 +100,8 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         PLUGIN_CLASSPATH_CONFIGURATION_NAME,
         target.disambiguationClassifier,
         compilationName
-    )
+    ),
+    resourcesPathConfigurationName: String = naming.name(RESOURCES_PATH),
 ): KotlinCompilationConfigurationsContainer {
     val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
 
@@ -201,24 +204,23 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         description = "Kotlin compiler plugins for $compilation"
     }
 
-    val resourcesConfiguration = target.project.configurations.maybeCreateResolvable(
-        lowerCamelCaseName(
-            target.disambiguationClassifier, "ResourcesPath"
-        )
-    ).apply {
-        // Inherit from compile dependency configuration, i.e. from the configuration that consumes apiElements
-        if (target is KotlinJsIrTarget) {
-            extendsFrom(runtimeDependencyConfiguration)
-        } else {
-            extendsFrom(compileDependencyConfiguration)
+    // FIXME: Explicitly add resources where KotlinJsIrTarget instantiates compilations
+    val resourcesConfiguration = if (withResources || target is KotlinJsIrTarget) {
+        target.project.configurations.maybeCreateResolvable(resourcesPathConfigurationName).apply {
+            // Inherit from compile dependency configuration, i.e. from the configuration that consumes apiElements
+            if (target is KotlinJsIrTarget) {
+                extendsFrom(runtimeDependencyConfiguration)
+            } else {
+                extendsFrom(compileDependencyConfiguration)
+            }
+
+            isVisible = false
+
+            configureResourcesPublicationAttributes(target)
+
+            description = "Kotlin resources for $compilation"
         }
-
-        isVisible = false
-
-        configureResourcesPublicationAttributes(target)
-
-        description = "Kotlin resources for $compilation"
-    }
+    } else null
 
     return DefaultKotlinCompilationConfigurationsContainer(
         deprecatedCompileConfiguration = deprecatedCompileConfiguration,

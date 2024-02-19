@@ -189,17 +189,17 @@ internal fun Configuration.configureResourcesPublicationAttributes(target: Kotli
         KotlinUsages.KOTLIN_RESOURCES
     }
     // FIXME: Discuss again
-    attributes.attribute(
+    attributes.setAttribute(
         Usage.USAGE_ATTRIBUTE,
         project.usageByName(usage)
     )
-    attributes.attribute(
+    attributes.setAttribute(
         LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
         project.objects.named(usage)
     )
 
-    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+    attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
 
     usesPlatformOf(target)
 }

@@ -48,6 +48,7 @@ enum class KotlinTargetResourcesResolutionStrategy {
             }
 
             ResourcesConfiguration -> compilation.internal.configurations.resourcesConfiguration
+                ?: error("Resources configuration is null for ${compilation.target.targetName}")
         }
     }
 

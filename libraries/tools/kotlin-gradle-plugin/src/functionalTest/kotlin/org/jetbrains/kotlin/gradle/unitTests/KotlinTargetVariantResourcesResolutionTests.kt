@@ -116,9 +116,6 @@ class KotlinTargetVariantResourcesResolutionTests {
                     producer.buildFile(
                         "kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"
                     ),
-                    // ???
-                    consumer.buildFile("classes/kotlin/wasmJs/main"),
-                    consumer.buildFile("processedResources/wasmJs/main"),
                 )
             },
         )
@@ -137,12 +134,7 @@ class KotlinTargetVariantResourcesResolutionTests {
             },
             expectedResult = { consumer, producer ->
                 hashSetOf(
-                    producer.buildFile(
-                        "kotlin-multiplatform-resources/zip-for-publication/wasmWasi/producer.kotlin_resources.zip"
-                    ),
-                    // ???
-                    consumer.buildFile("classes/kotlin/wasmWasi/main"),
-                    consumer.buildFile("processedResources/wasmWasi/main"),
+                    producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmWasi/producer.kotlin_resources.zip"),
                 )
             },
         )
@@ -170,11 +162,14 @@ class KotlinTargetVariantResourcesResolutionTests {
                 resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
                 dependencyScope = dependencyScope,
                 filterResolvedFiles = {
-                    it.filter { it.path.endsWith("kotlin_resources.zip") }.toSet()
+                    it.filterNot {
+                        it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
+                    }.toSet()
                 },
-                expectedResult = { _, _, producer ->
+                expectedResult = { _, middle, producer ->
                     setOf(
                         producer.buildFile("kotlin-multiplatform-resources/zip-for-publication/wasmJs/producer.kotlin_resources.zip"),
+                        middle.buildFile("libs/middle-wasm-js.klib"),
                     )
                 }
             )
@@ -189,7 +184,9 @@ class KotlinTargetVariantResourcesResolutionTests {
                 resolutionStrategy = KotlinTargetResourcesResolutionStrategy.VariantReselection,
                 dependencyScope = dependencyScope,
                 filterResolvedFiles = {
-                    it.filter { it.path.endsWith("kotlin_resources.zip") }.toSet()
+                    it.filterNot {
+                        it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
+                    }.toSet()
                 },
                 expectedResult = { _, _, producer ->
                     setOf(
@@ -320,7 +317,7 @@ class KotlinTargetVariantResourcesResolutionTests {
             assert = { consumer, _ ->
                 val resourcesConfiguration = consumer.multiplatformExtension.linuxX64()
                     .compilations.getByName("main")
-                    .internal.configurations.resourcesConfiguration
+                    .internal.configurations.resourcesConfiguration ?: error("Missing resources configuration")
 
                 assertEquals(
                     mapOf(
@@ -352,8 +349,8 @@ class KotlinTargetVariantResourcesResolutionTests {
             consumerTarget = consumerTarget,
             strategy = strategy,
             assert = { consumer, _ ->
-                val resourcesConfigurations = consumer.multiplatformExtension.targets.map {
-                    it.compilations.getByName("main").internal.configurations.resourcesConfiguration
+                val resourcesConfigurations = consumer.multiplatformExtension.targets.flatMap {
+                    it.compilations.mapNotNull { it.internal.configurations.resourcesConfiguration }
                 }
 
                 val nonResourcesConfigurations: Set<Configuration> = consumer.configurations.filter {

@@ -119,6 +119,8 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         const val MULTIPLATFORM_RESOURCES_DIRECTORY = "kotlin-multiplatform-resources"
         const val RESOURCES_CLASSIFIER = "kotlin_resources"
         const val RESOURCES_ZIP_EXTENSION = "${RESOURCES_CLASSIFIER}.zip"
+
+        const val RESOURCES_PATH = "ResourcesPath"
     }
 
 }
