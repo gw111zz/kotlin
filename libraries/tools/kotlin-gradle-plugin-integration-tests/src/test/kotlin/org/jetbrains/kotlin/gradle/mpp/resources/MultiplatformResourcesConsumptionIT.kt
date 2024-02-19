@@ -55,16 +55,19 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
         ) {
             val sharedRepo = projectPath.resolve("build/repo")
-            prepareProjectDependencies(gradleVersion, providedJdk).forEach {
+            prepareProjectDependencies(gradleVersion, providedJdk, sharedRepo).forEach {
                 settingsGradleKts.append(
                     """
                         include(":${it.name}")
                         project(":${it.name}").projectDir = File("${it.pathString}")
                     """.trimIndent()
                 )
-                settingsGradleKts.setUpRepositories(sharedRepo)
             }
             preparePublishedDependencies(gradleVersion, providedJdk, androidVersion, sharedRepo)
+
+            // Gradle 7.4.2 doesn't pick up sharedRepo from build.gradle.kts and Gradle 8.5 doesn't pick it up from settings.gradle.kts
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(sharedRepo)
+            settingsGradleKts.setUpRepositoriesInSettingGradleKts(sharedRepo)
 
             val resolvableTargets = listOf(
                 "linuxX64",
@@ -86,6 +89,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 }
             }
 
+            // This platform is not provided in dependency variants
             buildAndFailWithAGPVersion(
                 ":iosSimulatorArm64",
                 androidVersion = androidVersion,
@@ -97,6 +101,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
     private fun prepareProjectDependencies(
         gradleVersion: GradleVersion,
         providedJdk: JdkVersions.ProvidedJdk,
+        publicationRepository: Path,
     ): List<Path> {
         val projectWithoutResources = project(
             "multiplatformResources/consumption/dependency",
@@ -106,6 +111,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         ) {
             buildGradleKts.replaceText("<dependencies>", "implementation(project(\":projectWithResources\"))")
             buildGradleKts.replaceText("<enablePublication>", "false")
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
         }
         val projectWithResources = project(
             "multiplatformResources/consumption/dependency",
@@ -115,6 +121,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         ) {
             buildGradleKts.replaceText("<dependencies>", "implementation(project(\":projectWithResourcesTransitive\"))")
             buildGradleKts.replaceText("<enablePublication>", "true")
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
         }
         val projectWithResourcesTransitive = project(
             "multiplatformResources/consumption/dependency",
@@ -124,6 +131,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         ) {
             buildGradleKts.replaceText("<dependencies>", "")
             buildGradleKts.replaceText("<enablePublication>", "true")
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
         }
         return listOf(projectWithoutResources, projectWithResources, projectWithResourcesTransitive).map { it.projectPath }
     }
@@ -144,7 +152,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             buildGradleKts.replaceText("<dependencies>", "implementation(\"test:publishedWithResources:+\")")
             buildGradleKts.replaceText("<enablePublication>", "false")
             buildGradleKts.setUpPublishing(publicationRepository)
-            settingsGradleKts.setUpRepositories(publicationRepository)
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
         }
         val publishedWithResources = project(
             "multiplatformResources/consumption/dependency",
@@ -156,7 +164,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             buildGradleKts.replaceText("<dependencies>", "implementation(\"test:publishedWithResourcesTransitive:+\")")
             buildGradleKts.replaceText("<enablePublication>", "true")
             buildGradleKts.setUpPublishing(publicationRepository)
-            settingsGradleKts.setUpRepositories(publicationRepository)
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
         }
         val publishedWithResourcesTransitive = project(
             "multiplatformResources/consumption/dependency",
@@ -168,7 +176,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             buildGradleKts.replaceText("<dependencies>", "")
             buildGradleKts.replaceText("<enablePublication>", "true")
             buildGradleKts.setUpPublishing(publicationRepository)
-            settingsGradleKts.setUpRepositories(publicationRepository)
+            buildGradleKts.setUpRepositoriesInBuildGradleKts(publicationRepository)
         }
         listOf(publishedWithResourcesTransitive, publishedWithResources, publishedWithoutResources).forEach {
             it.buildWithAGPVersion(
@@ -179,21 +187,26 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         }
     }
 
-    private fun Path.setUpRepositories(publicationRepository: Path) {
-        append(
-            """
-                dependencyResolutionManagement {
-                    repositories {
-                        google()
-                        mavenCentral()
-                        mavenLocal()
-                        maven {
-                            url = uri("${publicationRepository.pathString}")
-                        }
-                    }
+    private fun Path.setUpRepositoriesInBuildGradleKts(publicationRepository: Path) = append(repositories(publicationRepository))
+    private fun Path.setUpRepositoriesInSettingGradleKts(publicationRepository: Path) = append(
+        """
+            dependencyResolutionManagement {
+                ${repositories(publicationRepository)}
+            }
+        """.trimIndent()
+    )
+
+    private fun repositories(publicationRepository: Path): String {
+        return """
+            repositories {
+                google()
+                mavenCentral()
+                mavenLocal()
+                maven {
+                    url = uri("${publicationRepository.pathString}")
                 }
-            """.trimIndent()
-        )
+            }
+        """.trimIndent()
     }
 
     private fun Path.setUpPublishing(publicationRepository: Path) {
