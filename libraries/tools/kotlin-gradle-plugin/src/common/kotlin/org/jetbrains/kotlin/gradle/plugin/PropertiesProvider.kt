@@ -501,7 +501,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property(PropertyNames.KOTLIN_APPLE_COCOAPODS_EXECUTABLE).orNull?.let { RegularFile { File(it) } }
 
     val swiftExportEnabled: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_APPLE_SWIFT_EXPORT_ENABLED) ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_ENABLED) ?: false
 
     /**
      * Allows the user to specify a custom location for the Kotlin/Native distribution.
@@ -665,7 +665,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_NATIVE_TOOLCHAIN_ENABLED = property("kotlin.native.toolchain.enabled")
         val KOTLIN_APPLE_COPY_FRAMEWORK_TO_BUILT_PRODUCTS_DIR = property("kotlin.apple.copyFrameworkToBuiltProductsDir")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
-        val KOTLIN_APPLE_SWIFT_EXPORT_ENABLED = property("kotlin.native.swift-export.enabled")
+        val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.swift-export.enabled")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used
