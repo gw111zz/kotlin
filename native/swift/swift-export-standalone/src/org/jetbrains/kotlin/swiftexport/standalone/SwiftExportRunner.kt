@@ -26,8 +26,7 @@ public fun main(args: Array<String>) {
         ),
         config = SwiftExportConfig(
             emptyMap(),
-            createDummyLogger(),
-            Distribution(System.getenv("KONAN_HOME"))
+            createDummyLogger()
         ),
         output = SwiftExportOutput(
             swiftApi = Paths.get(System.getenv("SWIFT_EXPORT_OUTPUT_SWIFT_API_PATH")),
