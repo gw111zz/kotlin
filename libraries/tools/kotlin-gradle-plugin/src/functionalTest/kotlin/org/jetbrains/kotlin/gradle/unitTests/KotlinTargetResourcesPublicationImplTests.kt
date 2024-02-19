@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 package org.jetbrains.kotlin.gradle.unitTests
 
 import com.android.build.gradle.LibraryExtension
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
