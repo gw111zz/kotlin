@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.buildOrNull
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
 import java.io.File
@@ -108,7 +109,7 @@ class KotlinTargetVariantResourcesResolutionTests {
             resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             filterResolvedFiles = {
                 it.filterNot {
-                    it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
+                    it.path.contains("kotlin-stdlib-wasm-js")
                 }.toSet()
             },
             expectedResult = { _, producer ->
@@ -129,7 +130,7 @@ class KotlinTargetVariantResourcesResolutionTests {
             resolutionStrategy = KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration,
             filterResolvedFiles = {
                 it.filterNot {
-                    it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
+                    it.path.contains("kotlin-stdlib-wasm-wasi")
                 }.toSet()
             },
             expectedResult = { _, producer ->
@@ -163,7 +164,7 @@ class KotlinTargetVariantResourcesResolutionTests {
                 dependencyScope = dependencyScope,
                 filterResolvedFiles = {
                     it.filterNot {
-                        it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
+                        it.path.contains("kotlin-stdlib-wasm-js")
                     }.toSet()
                 },
                 expectedResult = { _, middle, producer ->
@@ -185,7 +186,7 @@ class KotlinTargetVariantResourcesResolutionTests {
                 dependencyScope = dependencyScope,
                 filterResolvedFiles = {
                     it.filterNot {
-                        it.path.contains("org/jetbrains/kotlin/kotlin-stdlib")
+                        it.path.contains("kotlin-stdlib-wasm-js")
                     }.toSet()
                 },
                 expectedResult = { _, _, producer ->
@@ -322,17 +323,15 @@ class KotlinTargetVariantResourcesResolutionTests {
                 assertEquals(
                     mapOf(
                         // linuxX64ResourcesPath is the root resolvable configuration for the resolution
-                        "project :consumer" to listOf("linuxX64ResourcesPath"),
+                        "test:consumer" to listOf(listOf("linuxX64ResourcesPath")),
                         // stdlib doesn't have resources, so apiElements is selected as per compatibility rule
-                        "org.jetbrains.kotlin:kotlin-stdlib:2.0.255-SNAPSHOT" to listOf("nativeApiElements"),
+                        "org.jetbrains.kotlin:kotlin-stdlib" to listOf(listOf("nativeApiElements")),
                         // producer provides the consumable configuration with resources for the consumer
-                        "project :producer" to listOf("linuxX64ResourcesElements"),
+                        "test:producer" to listOf(listOf("linuxX64ResourcesElements")),
                     ),
-                    resourcesConfiguration.incoming.resolutionResult.allComponents.flatMap { resolvedComponent ->
-                        resolvedComponent.variants
-                    }.groupBy(
-                        keySelector = { it.owner.displayName },
-                        valueTransform = { it.displayName },
+                    resourcesConfiguration.incoming.resolutionResult.allComponents.groupBy(
+                        keySelector = { "${it.moduleVersion?.group}:${it.moduleVersion?.name}" },
+                        valueTransform = { it.variants.map { it.displayName } },
                     )
                 )
             }
