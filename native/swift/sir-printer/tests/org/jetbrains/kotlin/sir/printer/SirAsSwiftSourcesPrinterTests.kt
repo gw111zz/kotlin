@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.sir.printer
 
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildClass
 import org.jetbrains.kotlin.sir.builder.buildFunction
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -272,6 +273,26 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/commented_function"
+        )
+    }
+
+    @Test
+    fun `should print empty class`() {
+
+        val module = buildModule {
+            name = "Test"
+            declarations.add(
+                buildClass {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "Foo"
+                }
+            )
+        }
+
+        runTest(
+            module,
+            "testData/empty_class"
         )
     }
 

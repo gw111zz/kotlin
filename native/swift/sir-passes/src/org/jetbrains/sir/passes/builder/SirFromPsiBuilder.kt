@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildFunction
-import org.jetbrains.kotlin.sir.builder.buildGetter
-import org.jetbrains.kotlin.sir.builder.buildSetter
-import org.jetbrains.kotlin.sir.builder.buildVariable
+import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 
@@ -28,6 +25,17 @@ private class Visitor(
     private val res: MutableList<SirDeclaration>,
     private val analysisSession: KtAnalysisSession
 ) : KtTreeVisitorVoid() {
+
+    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+        // we do not handle inner declarations of class currently. No need to go deeper.
+        // super.visitClassOrObject(classOrObject)
+        with(analysisSession) {
+            classOrObject.process {
+                buildSirClassFromPsi(classOrObject)
+            }
+        }
+    }
+
     override fun visitNamedFunction(function: KtNamedFunction) {
         super.visitNamedFunction(function)
         with(analysisSession) {
@@ -51,6 +59,15 @@ private class Visitor(
             ?.let(converter)
             ?.let { res.add(it) }
     }
+}
+
+context(KtAnalysisSession)
+internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration = buildClass {
+    val symbol = classOrObject.getNamedClassOrObjectSymbol()
+        ?: throw IllegalStateException("unnamed kotlin class in public interfaces?")
+
+    name = classOrObject.name ?: "UNKNOWN_CLASS"
+    origin = KotlinSource(symbol)
 }
 
 context(KtAnalysisSession)

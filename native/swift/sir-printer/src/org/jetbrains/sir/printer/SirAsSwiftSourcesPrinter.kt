@@ -41,6 +41,19 @@ public class SirAsSwiftSourcesPrinter(private val printer: SmartPrinter) : SirVi
         println("import ${import.moduleName}")
     }
 
+    override fun visitClass(klass: SirClass): Unit = with(printer) {
+        println(
+            klass.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
+            "class ",
+            klass.name.swiftIdentifier,
+            " {"
+        )
+        withIndent {
+            klass.acceptChildren(this@SirAsSwiftSourcesPrinter)
+        }
+        println("}")
+    }
+
     override fun visitVariable(variable: SirVariable): Unit = with(printer) {
         print(
             variable.visibility.takeIf { it != SirVisibility.INTERNAL }?.let { "${it.swift} " } ?: "",
