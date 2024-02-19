@@ -142,7 +142,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                 }
 
                 if (context.isInsideInterface && declaration.status.isCompanion && declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
-                    reporter.reportOn(declaration.source, FirJsErrors.NAMED_COMPANION_ON_EXPORTED_INTERFACE, context)
+                    reporter.reportOn(declaration.source, FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE, context)
                 }
 
                 if (wrongDeclaration != null) {

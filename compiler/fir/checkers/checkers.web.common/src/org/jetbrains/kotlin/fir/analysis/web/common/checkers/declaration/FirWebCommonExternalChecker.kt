@@ -100,7 +100,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             container.isInterface &&
             declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT
         ) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.NAMED_COMPANION_ON_EXTERNAL_INTERFACE, context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE, context)
         }
 
 
