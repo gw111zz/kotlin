@@ -25143,6 +25143,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("nestedClassViaActualTypealiasResolutionPriority.kt")
+            public void testNestedClassViaActualTypealiasResolutionPriority() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasResolutionPriority.kt");
+            }
+
+            @Test
             @TestMetadata("nestedClassViaActualTypealiasWithTypeParam.kt")
             public void testNestedClassViaActualTypealiasWithTypeParam() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasWithTypeParam.kt");
@@ -26194,6 +26200,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("enumReordering.kt")
+                public void testEnumReordering() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/enum/enumReordering.kt");
+                }
+
+                @Test
                 @TestMetadata("javaEnum.kt")
                 public void testJavaEnum() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/enum/javaEnum.kt");
@@ -26567,6 +26579,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/simple.kt");
+                }
+
+                @Test
+                @TestMetadata("valDeclarationAndInitialization.kt")
+                public void testValDeclarationAndInitialization() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/valDeclarationAndInitialization.kt");
                 }
 
                 @Nested
@@ -27026,12 +27044,24 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 public void testSimpleHeaderVar() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/simpleHeaderVar.kt");
                 }
+
+                @Test
+                @TestMetadata("varDeclarationConflicts.kt")
+                public void testVarDeclarationConflicts() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/varDeclarationConflicts.kt");
+                }
             }
 
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/typealias")
             @TestDataPath("$PROJECT_ROOT")
             public class Typealias {
+                @Test
+                @TestMetadata("actualTypealiasClassifierRedeclaration.kt")
+                public void testActualTypealiasClassifierRedeclaration() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasClassifierRedeclaration.kt");
+                }
+
                 @Test
                 @TestMetadata("actualTypealiasToNothing.kt")
                 public void testActualTypealiasToNothing() throws Exception {
