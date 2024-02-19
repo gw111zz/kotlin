@@ -31947,6 +31947,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("SuppressAnnoInLastExpression.kts")
+      public void testSuppressAnnoInLastExpression() {
+        runTest("compiler/testData/diagnostics/tests/script/SuppressAnnoInLastExpression.kts");
+      }
+
+      @Test
       @TestMetadata("topLevelInlineFun.kts")
       public void testTopLevelInlineFun() {
         runTest("compiler/testData/diagnostics/tests/script/topLevelInlineFun.kts");

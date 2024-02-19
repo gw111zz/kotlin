@@ -1305,6 +1305,9 @@ open class PsiRawFirBuilder(
                                     // the last one need to be analyzed in script configurator to decide on result property
                                     // therefore no lazy conversion in this case
                                     allowLazyBody = !isLast,
+                                    // the last anonymous initializer could be converted to a property and its symbol will be dropped
+                                    // therefore we should not rely on it as a containing declaration symbol, and use the parent one instead
+                                    isLocal = isLast,
                                 )
 
                                 declarations.add(initializer)
@@ -2216,8 +2219,9 @@ open class PsiRawFirBuilder(
             initializer: KtAnonymousInitializer,
             containingDeclarationSymbol: FirBasedSymbol<*>?,
             allowLazyBody: Boolean = true,
+            isLocal: Boolean = false,
         ) = buildAnonymousInitializer {
-            withContainerSymbol(symbol) {
+            withContainerSymbol(symbol, isLocal) {
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
