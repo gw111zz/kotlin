@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublicationContainer
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -175,5 +177,29 @@ internal fun Configuration.configureSourcesPublicationAttributes(target: KotlinT
     // source variants doesn't have any dependencies (at least at the moment) so there is not much sense to use this attribute
     // however for Java Gradle Plugin compatibility and in order to prevent weird Variant Resolution errors we include this attribute
     attributes.setAttribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+    usesPlatformOf(target)
+}
+
+internal fun Configuration.configureResourcesPublicationAttributes(target: KotlinTarget) {
+    val project = target.project
+
+    val usage = if (target is KotlinJsIrTarget) {
+        KotlinUsages.KOTLIN_RESOURCES_JS
+    } else {
+        KotlinUsages.KOTLIN_RESOURCES
+    }
+    // FIXME: Discuss again
+    attributes.attribute(
+        Usage.USAGE_ATTRIBUTE,
+        project.usageByName(usage)
+    )
+    attributes.attribute(
+        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+        project.objects.named(usage)
+    )
+
+    attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
+    attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, project.attributeValueByName(Bundling.EXTERNAL))
+
     usesPlatformOf(target)
 }
