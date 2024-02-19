@@ -133,9 +133,11 @@ private fun registerSwiftExportCompilationAndGetBinary(
         swiftExportCompilationName,
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
-            swiftExportCompilation.compileTaskProvider.dependsOn(swiftExportTask)
             swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map { it.kotlinBridgePath.get().asFile.parent })
-            swiftExportCompilation.compilerOptions.options.optIn.add("kotlin.experimental.ExperimentalNativeApi")
+            swiftExportCompilation.compileTaskProvider.configure {
+                it.dependsOn(swiftExportTask)
+                it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")
+            }
 
             binaries.staticLib(swiftExportBinary) { staticLib ->
                 staticLib.compilation = swiftExportCompilation
