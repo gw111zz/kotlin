@@ -6,44 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.BuildServiceUsingKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.XcodeVersionTooHighWarning
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
-import org.jetbrains.kotlin.gradle.plugin.launch
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.konan.target.XcodeVersion
-
-internal val XcodeServiceSetupAction = KotlinProjectSetupAction {
-    launch {
-        val hasAppleTargets = multiplatformExtension.awaitTargets().any { it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily }
-        if (hasAppleTargets) {
-            val serviceProvider = XcodeVersionService.registerIfAbsent(this@KotlinProjectSetupAction)
-
-            tasks.withType<UsesXcodeVersionService>().configureEach {
-                it.usesService(serviceProvider)
-                it.xcodeVersionService.set(serviceProvider)
-            }
-        }
-
-    }
-}
-
-internal interface UsesXcodeVersionService : Task {
-    @get:Internal
-    val xcodeVersionService: Property<XcodeVersionService>
-}
 
 internal abstract class XcodeVersionService : BuildServiceUsingKotlinToolingDiagnostics<XcodeVersionService.Parameters> {
 
@@ -62,13 +34,8 @@ internal abstract class XcodeVersionService : BuildServiceUsingKotlinToolingDiag
 
     private val logger = Logging.getLogger(this::class.java)
 
-    /**
-     * Non-null on macOS, null otherwise
-     */
-    val version: XcodeVersion? = if (HostManager.hostIsMac) {
+    val version: XcodeVersion by lazy {
         Xcode.findCurrent().version.also(::checkVersionCompatibility)
-    } else {
-        null
     }
 
     private fun checkVersionCompatibility(xcodeVersion: XcodeVersion) = with(parameters) {

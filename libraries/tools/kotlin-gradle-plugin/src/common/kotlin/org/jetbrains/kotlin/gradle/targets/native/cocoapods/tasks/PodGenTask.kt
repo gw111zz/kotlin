@@ -16,7 +16,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersionService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 import java.io.File
@@ -26,7 +26,7 @@ import javax.inject.Inject
  * The task generates a synthetic project with all cocoapods dependencies
  */
 @DisableCachingByDefault
-abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : CocoapodsTask(), UsesXcodeVersionService {
+abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : CocoapodsTask(), UsesXcodeVersion {
 
     init {
         onlyIf {
@@ -116,7 +116,7 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
         }
 
     private fun insertXcode143DeploymentTargetWorkarounds(family: Family): String {
-        if (xcodeVersionService.get().version.let { it == null || it < XcodeVersion(14, 3) }) {
+        if (xcodeVersion < XcodeVersion(14, 3)) {
             return ""
         }
 

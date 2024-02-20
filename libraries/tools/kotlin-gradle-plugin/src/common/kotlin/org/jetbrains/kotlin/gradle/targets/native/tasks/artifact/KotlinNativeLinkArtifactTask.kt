@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersionService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.UsesXcodeVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
@@ -57,7 +57,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
 ) : DefaultTask(),
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
-    UsesXcodeVersionService,
+    UsesXcodeVersion,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
 
     @get:Input
@@ -248,6 +248,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     }
 
     private fun bitcodeEmbeddingMode(): BitcodeEmbeddingMode {
-        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcode.orNull, xcodeVersionService.get().version, konanTarget, debuggable.get())
+        return XcodeUtils.bitcodeEmbeddingMode(outputKind, embedBitcode.orNull, xcodeVersion, konanTarget, debuggable.get())
     }
 }
