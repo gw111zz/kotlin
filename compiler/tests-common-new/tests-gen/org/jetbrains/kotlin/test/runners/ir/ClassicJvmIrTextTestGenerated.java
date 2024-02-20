@@ -3172,7 +3172,7 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
       }
     }
 
-    @Nestedgit 
+    @Nested
     @TestMetadata("compiler/testData/ir/irText/js/external")
     @TestDataPath("$PROJECT_ROOT")
     public class External {
