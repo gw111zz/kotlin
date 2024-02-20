@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -27,10 +26,10 @@ import org.jetbrains.kotlin.test.services.sourceFileProvider
 object KtCodeFragmentModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
-        contextModule: KtModuleWithFiles?,
+        contextModule: KtTestModule?,
         testServices: TestServices,
         project: Project,
-    ): KtModuleWithFiles {
+    ): KtTestModule {
         requireNotNull(contextModule) { "Code fragment requires a context module" }
 
         val testFile = testModule.files.singleOrNull() ?: error("A single file is expected for a code fragment module")
@@ -67,7 +66,7 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
             DanglingFileResolutionMode.PREFER_SELF
         )
 
-        return KtModuleWithFiles(module, listOf(codeFragment))
+        return KtTestModule(testModule, module, listOf(codeFragment))
     }
 
     private fun findContextElement(file: KtFile, testServices: TestServices): KtElement? {

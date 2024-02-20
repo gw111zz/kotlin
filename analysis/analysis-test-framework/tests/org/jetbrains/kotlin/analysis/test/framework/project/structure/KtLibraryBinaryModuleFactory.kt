@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.test.framework.project.structure
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
@@ -20,14 +19,15 @@ import org.jetbrains.kotlin.test.services.TestServices
 object KtLibraryBinaryModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
-        contextModule: KtModuleWithFiles?,
+        contextModule: KtTestModule?,
         testServices: TestServices,
         project: Project,
-    ): KtModuleWithFiles {
+    ): KtTestModule {
         val library = testServices.compiledLibraryProvider.compileToLibrary(testModule).artifact
         val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)
 
-        return KtModuleWithFiles(
+        return KtTestModule(
+            testModule,
             KtLibraryModuleImpl(
                 testModule.name,
                 testModule.targetPlatform,

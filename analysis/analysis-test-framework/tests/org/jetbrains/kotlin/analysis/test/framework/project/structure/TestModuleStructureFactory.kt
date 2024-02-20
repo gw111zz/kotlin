@@ -9,8 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
@@ -40,14 +38,14 @@ import kotlin.io.path.nameWithoutExtension
 
 private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
 
-private typealias ModulesByName = Map<String, KtModuleWithFiles>
+private typealias ModulesByName = Map<String, KtTestModule>
 
 object TestModuleStructureFactory {
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
+    ): KtTestModuleProjectStructure {
         val modules = createModules(moduleStructure, testServices, project)
 
         val modulesByName = modules.associateByName()
@@ -61,17 +59,17 @@ object TestModuleStructureFactory {
             ktModule.addDependencies(testModule, testServices, modulesByName, libraryCache)
         }
 
-        return KtModuleProjectStructure(modules, libraryCache.values)
+        return KtTestModuleProjectStructure(modules, libraryCache.values)
     }
 
     private fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): List<KtModuleWithFiles> {
+    ): List<KtTestModule> {
         val moduleCount = moduleStructure.modules.size
-        val existingModules = HashMap<String, KtModuleWithFiles>(moduleCount)
-        val result = ArrayList<KtModuleWithFiles>(moduleCount)
+        val existingModules = HashMap<String, KtTestModule>(moduleCount)
+        val result = ArrayList<KtTestModule>(moduleCount)
 
         for (testModule in moduleStructure.modules) {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
@@ -88,7 +86,7 @@ object TestModuleStructureFactory {
         return result
     }
 
-    private fun ModulesByName.getByTestModule(testModule: TestModule): KtModuleWithFiles =
+    private fun ModulesByName.getByTestModule(testModule: TestModule): KtTestModule =
         this[testModule.name] ?: this.getValue(testModule.files.single().name)
 
     /**
