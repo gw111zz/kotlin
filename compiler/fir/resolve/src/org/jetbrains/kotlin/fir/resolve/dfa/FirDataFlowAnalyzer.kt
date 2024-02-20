@@ -932,9 +932,10 @@ abstract class FirDataFlowAnalyzer(
             // Reset implicit receivers back to their state *before* call arguments as tower resolve will use receiver types to lookup
             // functions after call arguments have been processed.
             // TODO(KT-64094): Consider moving logic to tower resolution instead.
-            val flow = exitNode.enterNode.flow
+            val flow = explicitReceiverFlow ?: exitNode.enterNode.flow
             updateAllReceivers(currentReceiverState, flow)
             currentReceiverState = flow
+            explicitReceiverFlow = null
         }
     }
 
@@ -1344,6 +1345,12 @@ abstract class FirDataFlowAnalyzer(
     // `getTypeUsingSmartcastInfo`; i.e. at any point between calls to this class' methods the types in the implicit
     // receiver stack also correspond to the data flow information attached to `graphBuilder.lastNode`.
     private var currentReceiverState: Flow? = null
+
+    private var explicitReceiverFlow: Flow? = null
+    fun saveExplicitReceiver() {
+        assert(explicitReceiverFlow == null)
+        explicitReceiverFlow = graphBuilder.lastNodeOrNull?.flow
+    }
 
     private fun CFGNode<*>.buildDefaultFlow(
         builder: (FlowPath, MutableFlow) -> Unit,
