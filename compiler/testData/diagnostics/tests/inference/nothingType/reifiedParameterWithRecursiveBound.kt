@@ -16,6 +16,18 @@ inline fun <reified T : Inv<T>> testInv(): T {
     }
 }
 
+inline fun <reified T : Inv<T>> testInvNested(): T {
+    return try {
+        try {
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>invBound()<!>
+        } catch (ex: Exception) {
+            throw Exception()
+        }
+    } catch (ex: Exception) {
+        throw Exception()
+    }
+}
+
 inline fun <reified T : In<T>> testIn(): T {
     return try {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>inBound()<!>
@@ -24,10 +36,33 @@ inline fun <reified T : In<T>> testIn(): T {
     }
 }
 
-// Unexpected behaviour
+inline fun <reified T : In<T>> testInNested(): T {
+    return try {
+        try {
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>inBound()<!>
+        } catch (ex: Exception) {
+            throw Exception()
+        }
+    } catch (ex: Exception) {
+        throw Exception()
+    }
+}
+
 inline fun <reified T : Out<T>> testOut(): T {
     return try {
-        outBound()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>outBound()<!>
+    } catch (ex: Exception) {
+        throw Exception()
+    }
+}
+
+inline fun <reified T : Out<T>> testOutNested(): T {
+    <!UNREACHABLE_CODE!>return<!> try {
+        try {
+            <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>outBound<!>()
+        } catch (ex: Exception) {
+            throw Exception()
+        }
     } catch (ex: Exception) {
         throw Exception()
     }

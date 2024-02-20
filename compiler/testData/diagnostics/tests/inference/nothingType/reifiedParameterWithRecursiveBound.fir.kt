@@ -10,7 +10,19 @@ inline fun <reified OB : Out<OB>> outBound(): OB = TODO()
 
 inline fun <reified T : Inv<T>> testInv(): T {
     return try {
-        invBound()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>invBound()<!>
+    } catch (ex: Exception) {
+        throw Exception()
+    }
+}
+
+inline fun <reified T : Inv<T>> testInvNested(): T {
+    return try {
+        try {
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>invBound()<!>
+        } catch (ex: Exception) {
+            throw Exception()
+        }
     } catch (ex: Exception) {
         throw Exception()
     }
@@ -18,16 +30,39 @@ inline fun <reified T : Inv<T>> testInv(): T {
 
 inline fun <reified T : In<T>> testIn(): T {
     return try {
-        inBound()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>inBound()<!>
     } catch (ex: Exception) {
         throw Exception()
     }
 }
 
-// Unexpected behaviour
+inline fun <reified T : In<T>> testInNested(): T {
+    return try {
+        try {
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>inBound()<!>
+        } catch (ex: Exception) {
+            throw Exception()
+        }
+    } catch (ex: Exception) {
+        throw Exception()
+    }
+}
+
 inline fun <reified T : Out<T>> testOut(): T {
     return try {
-        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>outBound<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>outBound()<!>
+    } catch (ex: Exception) {
+        throw Exception()
+    }
+}
+
+inline fun <reified T : Out<T>> testOutNested(): T {
+    return try {
+        try {
+            <!DEBUG_INFO_EXPRESSION_TYPE("T")!>outBound()<!>
+        } catch (ex: Exception) {
+            throw Exception()
+        }
     } catch (ex: Exception) {
         throw Exception()
     }

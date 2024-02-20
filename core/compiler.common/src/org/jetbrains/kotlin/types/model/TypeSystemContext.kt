@@ -440,6 +440,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker>
     fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker
     fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean
+    fun TypeParameterMarker.isReified(): Boolean
 
     fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean
 

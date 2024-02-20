@@ -178,7 +178,9 @@ class ResultTypeResolver(
         if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(resultType)) return true
 
         // Nothing and Nothing? is not allowed for reified parameters
-        if (isReified(variableWithConstraints.typeVariable)) return false
+        if (isReified(variableWithConstraints.typeVariable) ||
+            isK2 && filteredConstraints.any { it.type.typeConstructor().getTypeParameterClassifier()?.isReified() == true }
+        ) return false
 
         // It's ok to fix result to non-nullable Nothing and parameter is not reified
         if (!resultType.isNullableType()) return true

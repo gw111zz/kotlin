@@ -47,7 +47,6 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe?
 
     fun TypeParameterMarker.getName(): Name
-    fun TypeParameterMarker.isReified(): Boolean
 
     fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
 }
