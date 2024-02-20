@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
@@ -117,9 +118,35 @@ internal class ResultHandler(
                                     testReport.ignoredTests.filter { testName -> !testMatches(testName) },
                                     "Excessive tests have been ignored"
                                 )
+
+                                verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
                             }
 
-                            verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
+                            testRun.runParameters.get<TestRunParameter.WithIgnoredTestFilter> {
+                                verifyNoSuchTests(
+                                    testReport.passedTests.filter { testName -> !testMatches(testName) },
+                                    "Ignored tests have been executed"
+                                )
+                                verifyNoSuchTests(
+                                    testReport.failedTests.filter { testName ->
+                                        testName.packageName == testRun.testCase.nominalPackageName
+                                    },
+                                    "Test failure found in the test report"
+                                )
+                            }
+
+                            if (!testRun.runParameters.has<TestRunParameter.WithFilter>()) {
+                                verifyNoSuchTests(
+                                    testReport.failedTests.filter { testName ->
+                                        testName.packageName == testRun.testCase.nominalPackageName
+                                    },
+                                    "Test ${testRun.testCase.id} failure found in the test report"
+                                )
+                            }
+
+                            if (testRun.testCase.kind == TestKind.STANDALONE) {
+                                verifyNoSuchTests(testReport.failedTests, "Failed tests found in the test report")
+                            }
 
                             Assumptions.assumeFalse(
                                 testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(),
@@ -136,6 +163,7 @@ internal class ResultHandler(
             }
         } else {
             val runResultInfo = buildString {
+                appendLine("TestCase Kind: ${testRun.testCase.kind}")
                 appendLine("TestCaseId: ${testRun.testCase.id}")
                 appendLine("Exit code: ${runResult.exitCode}")
                 appendLine("Filtered test output is")
