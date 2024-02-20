@@ -6,8 +6,11 @@
 package org.jetbrains.sir.passes.builder
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.jetbrains.kotlin.sir.*
@@ -31,7 +34,11 @@ private class Visitor(
         // super.visitClassOrObject(classOrObject)
         with(analysisSession) {
             classOrObject.process {
-                buildSirClassFromPsi(classOrObject)
+                try {
+                    buildSirClassFromPsi(classOrObject)
+                } catch (e: Throwable) {
+                    null
+                }
             }
         }
     }
@@ -54,7 +61,7 @@ private class Visitor(
         }
     }
 
-    private inline fun <T : KtDeclaration> T.process(converter: T.() -> SirDeclaration) {
+    private inline fun <T : KtDeclaration> T.process(converter: T.() -> SirDeclaration?) {
         this.takeIf { it.isPublic }
             ?.let(converter)
             ?.let { res.add(it) }
@@ -64,9 +71,10 @@ private class Visitor(
 context(KtAnalysisSession)
 internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration = buildClass {
     val symbol = classOrObject.getNamedClassOrObjectSymbol()
-        ?: throw IllegalStateException("unnamed kotlin class in public interfaces?")
+        ?: throw IllegalStateException("unnamed kotlin class in public interfaces?") // todo: error handling strategy: KT-65980
+    require(symbol.isConsumableBySirBuilder())
 
-    name = classOrObject.name ?: "UNKNOWN_CLASS"
+    name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
     origin = KotlinSource(symbol)
 }
 
@@ -151,3 +159,24 @@ private fun buildSirNominalType(it: KtType): SirNominalType = SirNominalType(
             throw IllegalArgumentException("Swift Export does not support argument type: ${it.asStringForDebugging()}")
     }
 )
+
+context(KtAnalysisSession)
+private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
+    classKind == KtClassKind.CLASS
+            && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
+            && classIdIfNonLocal?.packageFqName?.isRoot != false
+            && !isData
+            && !isInline
+            && !isSealedClass()
+            && !isAbstractClass()
+
+context(KtAnalysisSession)
+private fun KtNamedClassOrObjectSymbol.isSealedClass(): Boolean = try {
+    getSealedClassInheritors()
+    true
+} catch (e: Throwable) {
+    false
+}
+
+context(KtAnalysisSession)
+private fun KtNamedClassOrObjectSymbol.isAbstractClass(): Boolean = modality == Modality.ABSTRACT
