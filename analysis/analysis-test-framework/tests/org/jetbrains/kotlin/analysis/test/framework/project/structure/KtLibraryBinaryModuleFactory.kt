@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.testModuleDecompiler
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
- * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.LibraryBinary
+ * @see TestModuleKind.LibraryBinary
  */
 object KtLibraryBinaryModuleFactory : KtModuleFactory {
     override fun createModule(
@@ -27,6 +28,7 @@ object KtLibraryBinaryModuleFactory : KtModuleFactory {
         val decompiledFiles = testServices.testModuleDecompiler.getAllPsiFilesFromLibrary(library, project)
 
         return KtTestModule(
+            TestModuleKind.LibraryBinary,
             testModule,
             KtLibraryModuleImpl(
                 testModule.name,

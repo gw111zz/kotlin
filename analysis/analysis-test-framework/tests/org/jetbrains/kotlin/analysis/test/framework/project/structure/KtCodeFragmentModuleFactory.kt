@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 
+/**
+ * @see TestModuleKind.CodeFragment
+ */
 object KtCodeFragmentModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
@@ -66,7 +70,7 @@ object KtCodeFragmentModuleFactory : KtModuleFactory {
             DanglingFileResolutionMode.PREFER_SELF
         )
 
-        return KtTestModule(testModule, module, listOf(codeFragment))
+        return KtTestModule(TestModuleKind.CodeFragment, testModule, module, listOf(codeFragment))
     }
 
     private fun findContextElement(file: KtFile, testServices: TestServices): KtElement? {
