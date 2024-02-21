@@ -1,6 +1,6 @@
-@file:OptIn(InternalKotlinGradlePluginApi::class)
+@file:OptIn(ComposeKotlinGradlePluginApi::class)
 
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 
 group = "test"
@@ -12,7 +12,7 @@ plugins {
 }
 
 kotlin {
-    val publication = kotlin.ext.get(
+    val publication = project.ext.get(
         KotlinTargetResourcesPublication.EXTENSION_NAME
     ) as KotlinTargetResourcesPublication
 
@@ -23,7 +23,7 @@ kotlin {
             target,
             { sourceSet ->
                 KotlinTargetResourcesPublication.ResourceRoot(
-                    absolutePath = project.provider { project.file("src/${sourceSet.name}/multiplatformResources") },
+                    resourcesBaseDirectory = project.provider { project.file("src/${sourceSet.name}/multiplatformResources") },
                     includes = emptyList(),
                     excludes = emptyList()
                 )
