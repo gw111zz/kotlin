@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication
 
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.Variant
-import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -26,9 +25,8 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.assembleHierarchicalResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -161,35 +159,31 @@ internal suspend fun KotlinAndroidTarget.setUpMultiplatformResourcesAndAssets(
     val legacyAgpVariant = compilation.androidVariant
     val legacyAgpVariantName = getVariantName(legacyAgpVariant)
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
-        project.launch {
-            val copyResourcesTask = compilation.registerAssembleHierarchicalResourcesTask(
-                disambiguateName("${legacyAgpVariantName}Resources"),
-                resources,
-            )
+        val copyResourcesTask = compilation.assembleHierarchicalResources(
+            disambiguateName("${legacyAgpVariantName}Resources"),
+            resources,
+        )
 
-            if (AndroidGradlePluginVersion.current < "8.0.0") {
-                // AGP [7.3-8) requires explicit dependsOn
-                legacyAgpVariant.processJavaResourcesProvider.configure {
-                    it.dependsOn(copyResourcesTask)
-                }
+        if (AndroidGradlePluginVersion.current < "8.0.0") {
+            // AGP [7.3-8) requires explicit dependsOn
+            legacyAgpVariant.processJavaResourcesProvider.configure {
+                it.dependsOn(copyResourcesTask)
             }
-
-            project.androidExtension.sourceSets.getByName(
-                compilation.defaultSourceSet.androidSourceSetInfo.androidSourceSetName
-            ).resources.srcDir(copyResourcesTask)
         }
+
+        project.androidExtension.sourceSets.getByName(
+            compilation.defaultSourceSet.androidSourceSetInfo.androidSourceSetName
+        ).resources.srcDir(copyResourcesTask)
     }
 
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnAndroidPublishAssets(this) { assets ->
         project.kotlinMultiplatformAndroidResourcesPublication.subscribeOnCopyAssetsTaskForVariant(legacyAgpVariantName) { copyTaskForAgp ->
-            project.launch {
-                val copyAssetsTask = compilation.registerAssembleHierarchicalResourcesTask(
-                    disambiguateName("${legacyAgpVariantName}Assets"),
-                    assets,
-                )
-                copyTaskForAgp.configure {
-                    it.inputDirectory.set(copyAssetsTask)
-                }
+            val copyAssetsTask = compilation.assembleHierarchicalResources(
+                disambiguateName("${legacyAgpVariantName}Assets"),
+                assets,
+            )
+            copyTaskForAgp.configure {
+                it.inputDirectory.set(copyAssetsTask)
             }
         }
     }
