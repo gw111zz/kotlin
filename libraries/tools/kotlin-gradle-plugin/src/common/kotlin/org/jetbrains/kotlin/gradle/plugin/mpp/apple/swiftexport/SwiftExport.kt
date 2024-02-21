@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -136,7 +135,6 @@ private fun registerSwiftExportCompilationAndGetBinary(
             swiftExportCompilation.associateWith(mainCompilation)
             swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map { it.kotlinBridgePath.getFile().parent })
             swiftExportCompilation.compileTaskProvider.configure {
-                it.dependsOn(swiftExportTask)
                 it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")
             }
 
@@ -182,7 +180,6 @@ private fun Project.registerPackageGeneration(
     }
 
     packageGenerationTask.dependsOn(staticLibrary.linkTaskProvider)
-    packageGenerationTask.dependsOn(swiftExportTask)
     return packageGenerationTask
 }
 
