@@ -244,7 +244,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         ktClassOrObject: KtPureClassOrObject
     ): IrConstructor =
         declareConstructor(
-            ktClassOrObject,
+            ktClassOrObject.primaryConstructor ?: ktClassOrObject,
             ktClassOrObject.primaryConstructor ?: ktClassOrObject,
             ktClassOrObject.contextReceivers.mapNotNull { it.typeReference() },
             primaryConstructorDescriptor

@@ -47,8 +47,7 @@ fun test(b: B) {
 // EXPECTATIONS WASM
 // test.kt:5 $box (9, 11, 11, 9, 4)
 // test.kt:8 $A.<init>
-// test.kt:10 $B.<init>
-// test.kt:12 $B.<init>
+// test.kt:10 $B.<init> (8, 17)
 // test.kt:15 $test (4, 4)
 // Standard.kt:3 $test (51, 64)
 // Standard.kt:67 $test
