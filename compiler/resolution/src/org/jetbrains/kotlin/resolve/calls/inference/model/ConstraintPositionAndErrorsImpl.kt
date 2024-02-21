@@ -49,7 +49,11 @@ class FixVariableConstraintPositionImpl(
     resolvedAtom: ResolvedAtom?
 ) : FixVariableConstraintPosition<ResolvedAtom?>(variable, resolvedAtom)
 
-class KnownTypeParameterConstraintPositionImpl(typeArgument: KotlinType) : KnownTypeParameterConstraintPosition<KotlinType>(typeArgument)
+class KnownTypeParameterConstraintPositionImpl(typeArgument: KotlinType) : KnownTypeParameterConstraintPosition<KotlinType>(typeArgument) {
+    init {
+        Unit
+    }
+}
 
 class LambdaArgumentConstraintPositionImpl(lambda: ResolvedLambdaAtom) : LambdaArgumentConstraintPosition<ResolvedLambdaAtom>(lambda)
 

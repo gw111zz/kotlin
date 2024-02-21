@@ -993,7 +993,9 @@ class Fir2IrDeclarationStorage(
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
         return when (val firDeclaration = firVariableSymbol.fir) {
             is FirEnumEntry -> {
-                classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
+                classifierStorage.getIrEnumEntrySymbol(firDeclaration)
+                /*
+                TODO: WTF is this????
                 val irParentClass = firDeclaration.containingClassLookupTag()?.let { classifierStorage.getIrClass(it) }!!
 
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
@@ -1003,6 +1005,7 @@ class Fir2IrDeclarationStorage(
                     irParent = irParentClass,
                     predefinedOrigin = if (containingFile != null) IrDeclarationOrigin.DEFINED else irParentClass.origin
                 ).symbol
+                */
             }
             is FirValueParameter -> {
                 localStorage.getParameter(firDeclaration)
@@ -1500,7 +1503,7 @@ class Fir2IrDeclarationStorage(
         return parentPackage
     }
 
-    private fun findIrParent(
+    internal fun findIrParent(
         callableDeclaration: FirCallableDeclaration,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
     ): IrDeclarationParent? {
