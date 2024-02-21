@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.tooling.core.withClosureGroupingByDistance
@@ -37,9 +40,15 @@ internal fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTaskProvi
 
     return project.registerTask<AssembleHierarchicalResourcesTask>(taskName) { assembleResources ->
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges) {
+            // See AssembleHierarchicalResourcesTaskTests.kt
+            val rootSourceSets = if (target is KotlinAndroidTarget && project.kotlinPropertiesProvider.mppResourcesTakeAgpSourceSets) {
+                kotlinSourceSets.sortedBy { it.name }
+            } else {
+                listOf(defaultSourceSet)
+            }
             val resourceDirectoriesByLevel = splitResourceDirectoriesBySourceSetLevel(
                 resources = resources,
-                rootSourceSets = kotlinSourceSets.sortedBy { it.name },
+                rootSourceSets = rootSourceSets,
             )
             val outputDirectory = project.layout.buildDirectory.dir(
                 "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"

@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.AssembleHierarchicalReso
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTaskProvider
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -118,6 +117,164 @@ class AssembleHierarchicalResourcesTaskTests {
         }
     }
 
+    @Test
+    fun `test copying order - with android library - with agp source sets`() {
+        with(buildProjectWithMPP()) {
+            enableMppResourcesUseAgpSourceSets(true)
+            androidLibrary { compileSdk = 31 }
+            val kotlin = multiplatformExtension
+            val androidTarget = kotlin.androidTarget()
+
+            evaluate()
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDebug", "androidMain")
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("debug"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidMain", "androidRelease")
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("release"))
+            )
+        }
+    }
+
+    @Test
+    fun `test copying order - with android library - without agp source sets`() {
+        with(buildProjectWithMPP()) {
+            enableMppResourcesUseAgpSourceSets(false)
+            androidLibrary { compileSdk = 31 }
+            val kotlin = multiplatformExtension
+            val androidTarget = kotlin.androidTarget()
+
+            evaluate()
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDebug")
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("debug"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidRelease")
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("release"))
+            )
+        }
+    }
+
+    @Test
+    fun `test copying order - with android library - with flavors and agp source sets`() {
+        with(buildProjectWithMPP()) {
+            enableMppResourcesUseAgpSourceSets(true)
+            androidLibrary {
+                compileSdk = 31
+                flavorDimensions += "version"
+                productFlavors {
+                    create("demo") {
+                        it.dimension = "version"
+                    }
+                    create("full") {
+                        it.dimension = "version"
+                    }
+                }
+            }
+            val kotlin = multiplatformExtension
+            val androidTarget = kotlin.androidTarget()
+
+            evaluate()
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDebug", "androidFull", "androidFullDebug", "androidMain"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("fullDebug"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidFull", "androidFullRelease", "androidMain", "androidRelease"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("fullRelease"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDebug", "androidDemo", "androidDemoDebug", "androidMain"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("demoDebug"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDemo", "androidDemoRelease", "androidMain", "androidRelease"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("demoRelease"))
+            )
+        }
+    }
+
+    @Test
+    fun `test copying order - with android library - with flavors and without agp source sets`() {
+        with(buildProjectWithMPP()) {
+            enableMppResourcesUseAgpSourceSets(false)
+            androidLibrary {
+                compileSdk = 31
+                flavorDimensions += "version"
+                productFlavors {
+                    create("demo") {
+                        it.dimension = "version"
+                    }
+                    create("full") {
+                        it.dimension = "version"
+                    }
+                }
+            }
+            val kotlin = multiplatformExtension
+            val androidTarget = kotlin.androidTarget()
+
+            evaluate()
+
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidFullDebug"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("fullDebug"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidFullRelease"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("fullRelease"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDemoDebug"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("demoDebug"))
+            )
+            assertEquals(
+                listOf(
+                    listOf("commonMain"),
+                    listOf("androidDemoRelease"),
+                ),
+                resourceDirectoriesCopyingOrder(androidTarget.compilations.getByName("demoRelease"))
+            )
+        }
+    }
+
     private fun Project.resourceDirectoriesCopyingOrder(
         compilation: KotlinCompilation<*>,
     ): List<List<String>> {
@@ -130,7 +287,7 @@ class AssembleHierarchicalResourcesTaskTests {
 
     private fun Project.registerFakeResourcesTask(compilation: KotlinCompilation<*>): TaskProvider<AssembleHierarchicalResourcesTask> {
         return compilation.registerAssembleHierarchicalResourcesTaskProvider(
-            "test",
+            "test${compilation.name}",
             resources = KotlinTargetResourcesPublicationImpl.TargetResources(
                 { ss ->
                     KotlinTargetResourcesPublication.ResourceRoot(

@@ -117,6 +117,10 @@ fun Project.enableMppResourcesPublication(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION, enabled.toString())
 }
 
+fun Project.enableMppResourcesUseAgpSourceSets(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_RESOURCES_USE_AGP_SOURCE_SETS, enabled.toString())
+}
+
 fun Project.enableIntransitiveMetadataConfiguration(enabled: Boolean = true) {
     propertiesExtension.set(KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION, enabled.toString())
 }
