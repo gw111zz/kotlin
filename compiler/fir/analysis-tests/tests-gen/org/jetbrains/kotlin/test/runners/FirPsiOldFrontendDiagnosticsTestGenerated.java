@@ -18910,6 +18910,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         public void testWrongApproximationWithDefNotNullTypesAndDelegates() {
           runTest("compiler/testData/diagnostics/tests/inference/constraints/wrongApproximationWithDefNotNullTypesAndDelegates.kt");
         }
+
+        @Test
+        @TestMetadata("wrongExpectedTypeForWhen.kt")
+        public void testWrongExpectedTypeForWhen() {
+          runTest("compiler/testData/diagnostics/tests/inference/constraints/wrongExpectedTypeForWhen.kt");
+        }
       }
 
       @Nested
