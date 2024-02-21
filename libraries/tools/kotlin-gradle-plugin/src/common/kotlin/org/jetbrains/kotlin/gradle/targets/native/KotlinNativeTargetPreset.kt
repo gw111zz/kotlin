@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.removeNativeCompiler
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -47,6 +48,8 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         if (!project.kotlinNativeToolchainEnabled) {
             @Suppress("DEPRECATION")
             project.setupNativeCompiler(konanTarget)
+        } else {
+            project.removeNativeCompiler()
         }
 
         val result = instantiateTarget(name).apply {

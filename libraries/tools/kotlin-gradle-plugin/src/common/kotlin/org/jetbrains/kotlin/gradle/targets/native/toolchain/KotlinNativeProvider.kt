@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.native.toolchain
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -51,11 +50,8 @@ internal class KotlinNativeProvider(
         }
     )
 
-    @get:Internal
-    val reinstallBundle: Property<Boolean> = project.objects.property(project.kotlinPropertiesProvider.nativeReinstall)
-
     @get:Input
-    internal val kotlinNativeBundleVersion: Provider<String> = bundleDirectory.zip(reinstallBundle) { bundleDir, reinstallFlag ->
+    internal val kotlinNativeBundleVersion: Provider<String> = bundleDirectory.map { bundleDir ->
         val kotlinNativeVersion = NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
         if (project.kotlinNativeToolchainEnabled) {
             kotlinNativeBundleBuildService.get().prepareKotlinNativeBundle(
@@ -63,7 +59,6 @@ internal class KotlinNativeProvider(
                 kotlinNativeCompilerConfiguration,
                 kotlinNativeVersion,
                 bundleDir.asFile,
-                reinstallFlag,
                 konanTargets
             )
         }

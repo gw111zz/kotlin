@@ -264,3 +264,10 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
     }
 }
+
+internal fun Project.removeNativeCompiler() {
+    if (kotlinPropertiesProvider.nativeReinstall) {
+        logger.info("Uninstall Kotlin/Native distribution")
+        NativeCompilerDownloader(this).compilerDirectory.deleteRecursively()
+    }
+}

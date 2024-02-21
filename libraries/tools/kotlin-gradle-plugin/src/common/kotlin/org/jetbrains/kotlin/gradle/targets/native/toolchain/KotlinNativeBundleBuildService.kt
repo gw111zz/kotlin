@@ -58,39 +58,46 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<BuildServi
         kotlinNativeCompilerConfiguration: ConfigurableFileCollection,
         kotlinNativeVersion: String,
         bundleDir: File,
-        reinstallFlag: Boolean,
         konanTargets: Set<KonanTarget>,
     ) {
 
-        val lock = NativeDistributionCommonizerLock(bundleDir) { message -> project.logger.info("Kotlin Native Bundle: $message") }
+        val lock =
+            NativeDistributionCommonizerLock(bundleDir) { message -> project.logger.info("Kotlin Native Bundle: $message") }
 
-        if (reinstallFlag) {
-            lock.withLock {
-                bundleDir.deleteRecursively()
-            }
-        }
+        lock.withLock {
 
-        if (!bundleDir.resolve(KONAN_DIRECTORY_NAME_TO_CHECK_EXISTENCE).exists()) {
-            val gradleCachesKotlinNativeDir =
-                kotlinNativeCompilerConfiguration
-                    .singleOrNull()
-                    ?.resolve(kotlinNativeVersion)
-                    ?: error(
-                        "Kotlin Native dependency has not been properly resolved. " +
-                                "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
-                    )
+            if (!bundleDir.resolve(KONAN_DIRECTORY_NAME_TO_CHECK_EXISTENCE).exists()) {
+                val gradleCachesKotlinNativeDir =
+                    resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeCompilerConfiguration)
 
-            project.logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
-            lock.withLock {
+                project.logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
                 fso.copy {
                     it.from(gradleCachesKotlinNativeDir)
                     it.into(bundleDir)
                 }
+                project.logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
             }
-            project.logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
         }
 
         project.setupKotlinNativeDependencies(konanTargets)
+    }
+
+    private fun resolveKotlinNativeConfiguration(
+        kotlinNativeVersion: String,
+        kotlinNativeCompilerConfiguration: ConfigurableFileCollection,
+    ): File {
+        val resolutionErrorMessage = "Kotlin Native dependency has not been properly resolved. " +
+                "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
+
+        val gradleCachesKotlinNativeDir = kotlinNativeCompilerConfiguration
+            .singleOrNull()
+            ?.resolve(kotlinNativeVersion)
+            ?: error(resolutionErrorMessage)
+
+        if (!gradleCachesKotlinNativeDir.exists()) {
+            throw IllegalArgumentException(resolutionErrorMessage)
+        }
+        return gradleCachesKotlinNativeDir
     }
 
     private fun Project.setupKotlinNativeDependencies(konanTargets: Set<KonanTarget>) {
