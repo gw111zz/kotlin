@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -47,9 +46,21 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
     ) {
         if (callExpression.dispatchReceiver?.resolvedType is ConeDynamicType) return
         // KT-61905: TODO: Return also in case of error type.
-        val unwrapped = receiver?.unwrapSmartcastExpression()
-        if (unwrapped !is FirPropertyAccessExpression) return
-        val diagnostic = unwrapped.nonFatalDiagnostics.firstIsInstanceOrNull<ConePropertyAsOperator>() ?: return
-        reporter.reportOn(callExpression.calleeReference.source, FirErrors.PROPERTY_AS_OPERATOR, diagnostic.symbol, context)
+        val unwrapped = receiver?.unwrapSmartcastExpression() ?: return
+        val nonFatalDiagnostics =
+            (unwrapped as? FirQualifiedAccessExpression)?.nonFatalDiagnostics ?: (unwrapped as? FirResolvedQualifier)?.nonFatalDiagnostics
+            ?: return
+        val diagnostic = nonFatalDiagnostics.firstIsInstanceOrNull<ConeNotFunctionAsOperator>() ?: return
+        val diagnosticSymbol = diagnostic.symbol
+        if (diagnosticSymbol is FirPropertySymbol) {
+            reporter.reportOn(callExpression.calleeReference.source, FirErrors.PROPERTY_AS_OPERATOR, diagnosticSymbol, context)
+        } else {
+            val name = unwrapped.resolvedType.classId!!.shortClassName
+            if (name == OperatorNameConventions.ITERATOR) {
+                reporter.reportOn(unwrapped.source, FirErrors.ITERATOR_MISSING, context)
+            } else {
+                reporter.reportOn(unwrapped.source, FirErrors.UNRESOLVED_REFERENCE, name.asString() + "()", null, context)
+            }
+        }
     }
 }

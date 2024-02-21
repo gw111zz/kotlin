@@ -168,11 +168,11 @@ class FirCallCompletionResultsWriterTransformer(
 
         qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
 
-        subCandidate.diagnostics.firstIsInstanceOrNull<PropertyAsOperator>()?.let { propertyAsOperator ->
-            val conePropertyAsOperator = ConePropertyAsOperator(propertyAsOperator.propertySymbol)
+        subCandidate.diagnostics.firstIsInstanceOrNull<NotFunctionAsOperator>()?.let { propertyAsOperator ->
+            val coneNotFunctionAsOperator = ConeNotFunctionAsOperator(propertyAsOperator.symbol)
             val nonFatalDiagnostics: List<ConeDiagnostic> = buildList {
                 addAll(qualifiedAccessExpression.nonFatalDiagnostics)
-                add(conePropertyAsOperator)
+                add(coneNotFunctionAsOperator)
             }
             qualifiedAccessExpression.replaceNonFatalDiagnostics(nonFatalDiagnostics)
         }
