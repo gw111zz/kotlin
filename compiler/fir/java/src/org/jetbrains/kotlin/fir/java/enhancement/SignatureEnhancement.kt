@@ -541,11 +541,11 @@ class FirSignatureEnhancement(
         ).enhance(bound, emptyList(), FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND)
 
 
-    fun enhanceSuperTypes(notEnhancedSuperTypes: List<FirTypeRef>): List<FirTypeRef> {
+    fun enhanceSuperTypes(unEnhancedSuperTypes: List<FirTypeRef>): List<FirTypeRef> {
         val purelyImplementedSupertype = getPurelyImplementedSupertype(moduleData.session)
         val purelyImplementedSupertypeClassId = purelyImplementedSupertype?.classId
         return buildList {
-            notEnhancedSuperTypes.mapNotNullTo(this) { superType ->
+            unEnhancedSuperTypes.mapNotNullTo(this) { superType ->
                 enhanceSuperType(superType).takeUnless {
                     purelyImplementedSupertypeClassId != null && it.coneType.classId == purelyImplementedSupertypeClassId
                 }
