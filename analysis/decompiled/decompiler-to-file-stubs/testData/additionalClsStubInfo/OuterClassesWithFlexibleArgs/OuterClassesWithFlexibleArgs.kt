@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 
 public class OuterClassesWithFlexibleArgs<K, L>(k: K, l: L) {
