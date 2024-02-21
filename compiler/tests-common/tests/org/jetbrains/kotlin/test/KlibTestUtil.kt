@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
+import java.nio.file.Paths
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 object KlibTestUtil {
@@ -50,6 +52,8 @@ object KlibTestUtil {
         )
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
+        val stdlibFilePath = Paths.get("dist/common/kotlin-stdlib-common.jar")
+        configuration.addJvmClasspathRoot(stdlibFilePath.toFile())
 
         val rootDisposable = Disposer.newDisposable("Disposable for ${KlibTestUtil::class.simpleName}.compileCommonSourcesToKlib")
         val module = try {
@@ -100,7 +104,8 @@ object KlibTestUtil {
             metadataVersion = KlibMetadataVersion.INSTANCE,
             exportKDoc = false,
             skipExpects = false,
-            project = null
+            project = null,
+            includeOnlyModuleContent = true,
         )
 
         val serializedMetadata = serializer.serializeModule(module)
