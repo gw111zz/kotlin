@@ -23,7 +23,7 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
 
         val referenceDtsFile = module.files.first().originalFile.parentFile
             .resolve("index.d.mts")
-            .takeIf { it.exists() } ?: error("Can't find reference .d.mts file")
+            .run { takeIf { it.exists() } ?: error("'${path}' doesn't exist") }
 
         val generatedDts = info.compilerResult.dts
             ?: error("Can't find generated .d.ts file")
