@@ -2584,7 +2584,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM,
-            "Ambiguous access to the 'entries' property from within the enum is deprecated. Please add the explicit qualifier to the call."
+            "Ambiguous access to the 'entries' property of enum class is deprecated. Please resolve the ambiguity (e.g. by adding explicit qualifier to the call)."
         )
         map.put(
             DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE,
