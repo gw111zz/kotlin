@@ -33,17 +33,14 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         val resourcePathForSourceSet: (KotlinSourceSet) -> (KotlinTargetResourcesPublication.ResourceRoot),
         val relativeResourcePlacement: Provider<File>,
     )
-    
+
     private val targetsThatSupportPublication = listOf(
         KotlinJsIrTarget::class,
         KotlinNativeTarget::class,
         KotlinJvmTarget::class,
     )
 
-    private val targetToResourcesMap: MutableMap<KotlinTarget, KotlinTargetResourcesPublication.TargetResources> = mutableMapOf()
-
     private val targetToResourcesMap: MutableMap<KotlinTarget, TargetResources> = mutableMapOf()
-
     private val targetResourcesSubscribers: MutableMap<KotlinTarget, MutableList<(TargetResources) -> (Unit)>> = mutableMapOf()
 
     internal fun subscribeOnPublishResources(
@@ -74,7 +71,7 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
             return
         }
 
-        val resources = KotlinTargetResourcesPublication.TargetResources(
+        val resources = TargetResources(
             resourcePathForSourceSet = resourcePathForSourceSet,
             relativeResourcePlacement = relativeResourcePlacement,
         )
