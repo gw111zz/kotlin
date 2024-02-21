@@ -6,22 +6,17 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import java.io.File
 
-@InternalKotlinGradlePluginApi
+@ComposeKotlinGradlePluginApi
 interface KotlinTargetResourcesPublication {
 
-    data class TargetResources(
-        val resourcePathForSourceSet: (KotlinSourceSet) -> (ResourceRoot),
-        val relativeResourcePlacement: Provider<File>,
-    )
-
     data class ResourceRoot(
-        val absolutePath: Provider<File>,
+        val resourcesBaseDirectory: Provider<File>,
         val includes: List<String>,
         val excludes: List<String>,
     )

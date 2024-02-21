@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.resources
 
-import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.getOrPut
@@ -14,8 +15,11 @@ import org.jetbrains.kotlin.gradle.utils.getOrPut
 internal val KotlinMultiplatformExtension.resourcesPublicationExtension: KotlinTargetResourcesPublicationImpl?
     get() {
         if (!project.kotlinPropertiesProvider.mppResourcesPublication) return null
-        (this as ExtensionAware)
-        return this.extraProperties.getOrPut(KotlinTargetResourcesPublication.EXTENSION_NAME) {
+        return project.extraProperties.getOrPut(KotlinTargetResourcesPublication.EXTENSION_NAME) {
             project.objects.newInstance(KotlinTargetResourcesPublicationImpl::class.java, project)
         }
     }
+
+internal val RegisterMultiplatformResourcesPublicationExtensionAction = KotlinProjectSetupAction {
+    multiplatformExtension.resourcesPublicationExtension
+}

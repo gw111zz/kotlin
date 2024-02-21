@@ -27,13 +27,18 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
     val project: Project
 ) : KotlinTargetResourcesPublication {
 
-    private val targetToResourcesMap: MutableMap<KotlinTarget, KotlinTargetResourcesPublication.TargetResources> = mutableMapOf()
+    internal data class TargetResources(
+        val resourcePathForSourceSet: (KotlinSourceSet) -> (KotlinTargetResourcesPublication.ResourceRoot),
+        val relativeResourcePlacement: Provider<File>,
+    )
 
-    private val targetResourcesSubscribers: MutableMap<KotlinTarget, MutableList<(KotlinTargetResourcesPublication.TargetResources) -> (Unit)>> = mutableMapOf()
+    private val targetToResourcesMap: MutableMap<KotlinTarget, TargetResources> = mutableMapOf()
+
+    private val targetResourcesSubscribers: MutableMap<KotlinTarget, MutableList<(TargetResources) -> (Unit)>> = mutableMapOf()
 
     internal fun subscribeOnPublishResources(
         target: KotlinTarget,
-        notify: (KotlinTargetResourcesPublication.TargetResources) -> (Unit),
+        notify: (TargetResources) -> (Unit),
     ) {
         targetToResourcesMap[target]?.let(notify)
         targetResourcesSubscribers.getOrPut(target, { mutableListOf() }).add(notify)
