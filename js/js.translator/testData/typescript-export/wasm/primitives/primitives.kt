@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// Waiting for non-default export to be landed
-
 // MODULE: main
 // FILE: primitives.kt
 
