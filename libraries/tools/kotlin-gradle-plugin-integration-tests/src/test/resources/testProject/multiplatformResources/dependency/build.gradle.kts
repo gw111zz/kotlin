@@ -1,7 +1,7 @@
-@file:OptIn(InternalKotlinGradlePluginApi::class)
+@file:OptIn(ComposeKotlinGradlePluginApi::class)
 
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
