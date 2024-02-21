@@ -112,9 +112,9 @@ private fun Project.registerSwiftExportRun(
         // Input
         task.swiftExportClasspath.from(project.maybeCreateSwiftExportClasspathResolvableConfiguration())
         task.parameters.sourceRoot.set(directoryProvider.getOrThrow())
-        task.bridgeModuleName.set(swiftApiModuleName.map { "${it}Bridge" })
-        task.debugMode.set(true)
-        task.konanDistribution.set(konanDistribution.root)
+        task.parameters.bridgeModuleName.set(swiftApiModuleName.map { "${it}Bridge" })
+        task.parameters.debugMode.set(true)
+        task.parameters.konanDistribution.set(konanDistribution.root)
 
         // Output
         task.parameters.swiftApiPath.set(swiftIntermediates.map { it.file("KotlinAPI.swift") })
