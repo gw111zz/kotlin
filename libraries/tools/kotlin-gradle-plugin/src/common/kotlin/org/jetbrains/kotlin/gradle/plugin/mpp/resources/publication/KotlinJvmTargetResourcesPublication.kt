@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.assembleHierarchicalResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -27,17 +27,15 @@ internal val SetUpMultiplatformJvmResourcesPublicationAction = KotlinProjectSetu
     }
 }
 
-private suspend fun KotlinJvmTarget.setUpMultiplatformResourcesAndAssets() {
+private fun KotlinJvmTarget.setUpMultiplatformResourcesAndAssets() {
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(
         this
     ) { resources ->
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        project.launch {
-            val copyResourcesTask = mainCompilation.registerAssembleHierarchicalResourcesTask(
-                targetName,
-                resources,
-            )
-            mainCompilation.defaultSourceSet.resources.srcDir(copyResourcesTask)
-        }
+        val copyResourcesTask = mainCompilation.assembleHierarchicalResources(
+            targetName,
+            resources,
+        )
+        mainCompilation.defaultSourceSet.resources.srcDir(copyResourcesTask)
     }
 }
