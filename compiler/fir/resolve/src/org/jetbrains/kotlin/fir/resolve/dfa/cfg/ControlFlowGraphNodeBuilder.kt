@@ -124,8 +124,9 @@ fun ControlFlowGraphBuilder.createFunctionCallArgumentsEnterNode(fir: FirFunctio
 fun ControlFlowGraphBuilder.createFunctionCallArgumentsExitNode(
     fir: FirFunctionCall,
     enterNode: FunctionCallArgumentsEnterNode,
+    explicitReceiver: CFGNode<FirExpression>? = null,
 ): FunctionCallArgumentsExitNode =
-    FunctionCallArgumentsExitNode(currentGraph, fir, enterNode, levelCounter)
+    FunctionCallArgumentsExitNode(currentGraph, fir, enterNode, explicitReceiver, levelCounter)
 
 fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
     FunctionCallNode(currentGraph, fir, levelCounter)

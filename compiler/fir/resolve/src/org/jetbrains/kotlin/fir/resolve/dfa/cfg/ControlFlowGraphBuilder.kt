@@ -1506,6 +1506,11 @@ class ControlFlowGraphBuilder {
         lastNodes.reset()
     }
 
+    fun getCurrentFunctionCallArgumentsExitNode(): FunctionCallArgumentsExitNode? {
+        return exitFunctionCallArgumentsNodes.topOrNull()
+    }
+
+
     // ----------------------------------- Edge utils -----------------------------------
 
     private fun addNewSimpleNode(node: CFGNode<*>, isDead: Boolean = false) {

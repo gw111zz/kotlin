@@ -928,14 +928,13 @@ abstract class FirDataFlowAnalyzer(
 
         if (exitNode != null) {
             exitNode.mergeIncomingFlow()
-
-            // Reset implicit receivers back to their state *before* call arguments as tower resolve will use receiver types to lookup
-            // functions after call arguments have been processed.
+            // Reset implicit receivers back to their state *before* call arguments but after explicit receiver
+            // has been resolved, if any, as tower resolve will use receiver types to lookup functions after call
+            // arguments have been processed.
             // TODO(KT-64094): Consider moving logic to tower resolution instead.
-            val flow = explicitReceiverFlow ?: exitNode.enterNode.flow
+            val flow = exitNode.explicitReceiver?.flow ?: exitNode.enterNode.flow
             updateAllReceivers(currentReceiverState, flow)
             currentReceiverState = flow
-            explicitReceiverFlow = null
         }
     }
 
@@ -1346,10 +1345,12 @@ abstract class FirDataFlowAnalyzer(
     // receiver stack also correspond to the data flow information attached to `graphBuilder.lastNode`.
     private var currentReceiverState: Flow? = null
 
-    private var explicitReceiverFlow: Flow? = null
-    fun saveExplicitReceiver() {
-        assert(explicitReceiverFlow == null)
-        explicitReceiverFlow = graphBuilder.lastNodeOrNull?.flow
+
+    fun setLastNodeAsCurrentsCallExplicitReceiver() {
+        val explicitReceiver = graphBuilder.lastNode
+        graphBuilder.getCurrentFunctionCallArgumentsExitNode()?.also {
+            it.explicitReceiver = explicitReceiver
+        }
     }
 
     private fun CFGNode<*>.buildDefaultFlow(
