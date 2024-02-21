@@ -58,7 +58,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksSkipped(":shared:embedAndSignAppleFrameworkForXcode")
 
                 assertDirectoryInProjectExists("shared/build/iosArm64DebugSPMPackage")
-                assertDirectoryInProjectExists("shared/build/iosArm64DebugSwiftExportSwiftExport")
+                assertDirectoryInProjectExists("shared/build/iosArm64DebugSwiftExport")
             }
         }
     }
