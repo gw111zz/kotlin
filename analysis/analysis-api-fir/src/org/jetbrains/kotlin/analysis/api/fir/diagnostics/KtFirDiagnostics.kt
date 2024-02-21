@@ -3490,8 +3490,8 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DeprecatedAccessToEnumEntryCompanionProperty::class
     }
 
-    interface DeprecatedAccessToEntryPropertyFromEnum : KtFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = DeprecatedAccessToEntryPropertyFromEnum::class
+    interface DeprecatedAccessToEntryProperty : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = DeprecatedAccessToEntryProperty::class
     }
 
     interface DeprecatedAccessToEnumEntryPropertyAsReference : KtFirDiagnostic<PsiElement> {

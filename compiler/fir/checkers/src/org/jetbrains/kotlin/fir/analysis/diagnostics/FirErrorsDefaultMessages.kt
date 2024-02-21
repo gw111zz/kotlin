@@ -190,7 +190,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_USES_EXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_NOT_TO_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_BINARY_MOD
@@ -2583,7 +2583,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Ambiguous access to the enum companion's property 'entries' is deprecated. Please, add the explicit 'Companion' qualifier to the class name."
         )
         map.put(
-            DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM,
+            DEPRECATED_ACCESS_TO_ENTRY_PROPERTY,
             "Ambiguous access to the 'entries' property of enum class is deprecated. Please resolve the ambiguity (e.g. by adding explicit qualifier to the call)."
         )
         map.put(

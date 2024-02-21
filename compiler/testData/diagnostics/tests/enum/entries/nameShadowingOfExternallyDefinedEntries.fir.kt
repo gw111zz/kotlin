@@ -9,7 +9,7 @@ enum class E {
     ;
 
     fun foo() {
-        <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>
+        <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY!>entries<!>
         pckg.entries
     }
 }
@@ -20,7 +20,7 @@ class A {
 
         class B {
             fun foo() {
-                <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>
+                <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY!>entries<!>
                 pckg.entries
             }
         }

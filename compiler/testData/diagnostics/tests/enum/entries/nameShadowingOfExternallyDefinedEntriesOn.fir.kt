@@ -10,7 +10,7 @@ enum class E {
     ;
 
     fun foo() {
-        <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>.length
+        <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY!>entries<!>.length
         pckg.entries.length
     }
 }
@@ -21,7 +21,7 @@ class A {
 
         class B {
             fun foo() {
-                <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>.length
+                <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY!>entries<!>.length
                 pckg.entries.length
             }
         }

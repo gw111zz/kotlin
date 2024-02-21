@@ -28,7 +28,7 @@ object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionC
         if (expression.dispatchReceiver is FirResolvedQualifier || expression.extensionReceiver is FirResolvedQualifier) {
             reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY, context)
         } else {
-            reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM, context)
+            reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY, context)
         }
     }
 }

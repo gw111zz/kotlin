@@ -5013,8 +5013,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM) { firDiagnostic ->
-        DeprecatedAccessToEntryPropertyFromEnumImpl(
+    add(FirErrors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY) { firDiagnostic ->
+        DeprecatedAccessToEntryPropertyImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
