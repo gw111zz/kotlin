@@ -325,19 +325,19 @@ class IrFakeOverrideBuilder(
         compatibilityMode: Boolean
     ) {
         val modality = determineModalityForFakeOverride(overridables)
-        val visibility = findMemberWithMaxVisibility(overridables).override.visibility
+        val maxVisibilityMember = findMemberWithMaxVisibility(overridables).override
         val mostSpecific = selectMostSpecificMember(overridables)
 
         val fakeOverride = mostSpecific.override.apply {
             when (this) {
                 is IrPropertyWithLateBinding -> {
-                    this.visibility = visibility
+                    this.visibility = maxVisibilityMember.visibility
                     this.modality = modality
-                    this.getter = this.getter?.updateAccessorModalityAndVisibility(modality, visibility)
-                    this.setter = this.setter?.updateAccessorModalityAndVisibility(modality, visibility)
+                    this.getter = this.getter?.updateAccessorModalityAndVisibility(modality, ((maxVisibilityMember as? IrProperty)?.getter ?: maxVisibilityMember).visibility)
+                    this.setter = this.setter?.updateAccessorModalityAndVisibility(modality, ((maxVisibilityMember as? IrProperty)?.setter ?: maxVisibilityMember).visibility)
                 }
                 is IrFunctionWithLateBinding -> {
-                    this.visibility = visibility
+                    this.visibility = maxVisibilityMember.visibility
                     this.modality = modality
                 }
                 else -> error("Unexpected fake override kind: $this")
