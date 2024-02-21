@@ -34,11 +34,7 @@ private class Visitor(
         // super.visitClassOrObject(classOrObject)
         with(analysisSession) {
             classOrObject.process {
-                try {
-                    buildSirClassFromPsi(classOrObject)
-                } catch (e: Throwable) {
-                    null
-                }
+                buildSirClassFromPsi(classOrObject)
             }
         }
     }
@@ -69,13 +65,15 @@ private class Visitor(
 }
 
 context(KtAnalysisSession)
-internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration = buildClass {
-    val symbol = classOrObject.getNamedClassOrObjectSymbol()
-        ?: throw IllegalStateException("unnamed kotlin class in public interfaces?") // todo: error handling strategy: KT-65980
-    require(symbol.isConsumableBySirBuilder())
-
-    name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
-    origin = KotlinSource(symbol)
+internal fun buildSirClassFromPsi(classOrObject: KtClassOrObject): SirNamedDeclaration? {
+    val symbol = classOrObject
+        .getNamedClassOrObjectSymbol()
+        ?.takeIf { it.isConsumableBySirBuilder() }
+        ?: return null // todo: error handling strategy: KT-65980
+    return buildClass {
+        name = classOrObject.name ?: "UNKNOWN_CLASS" // todo: error handling strategy: KT-65980
+        origin = KotlinSource(symbol)
+    }
 }
 
 context(KtAnalysisSession)
@@ -169,6 +167,7 @@ private fun KtNamedClassOrObjectSymbol.isConsumableBySirBuilder(): Boolean =
             && !isInline
             && !isSealedClass()
             && !isAbstractClass()
+            && isFinalClass()
 
 context(KtAnalysisSession)
 private fun KtNamedClassOrObjectSymbol.isSealedClass(): Boolean = try {
@@ -177,6 +176,9 @@ private fun KtNamedClassOrObjectSymbol.isSealedClass(): Boolean = try {
 } catch (e: Throwable) {
     false
 }
+
+context(KtAnalysisSession)
+private fun KtNamedClassOrObjectSymbol.isFinalClass(): Boolean = modality == Modality.FINAL
 
 context(KtAnalysisSession)
 private fun KtNamedClassOrObjectSymbol.isAbstractClass(): Boolean = modality == Modality.ABSTRACT
