@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_CLASSIFIER
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_ZIP_EXTENSION
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.assembleHierarchicalResources
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
@@ -41,33 +41,31 @@ internal fun KotlinMultiplatformExtension.setUpResourcesVariant(
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
         // FIXME: Is this code single-threaded?
         targetRegistersResourcesForPublication = true
-        project.launch {
-            val copyTask = compilation.registerAssembleHierarchicalResourcesTask(
-                targetName,
-                resources,
-            )
-            val zippedResourcesDirectory = project.layout.buildDirectory.dir(
-                "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/zip-for-publication/${targetName}"
-            )
-            val zipResourcesForPublication = project.registerTask<Zip>(
-                "${targetName}ZipMultiplatformResourcesForPublication"
-            ) { copy ->
-                copy.destinationDirectory.set(zippedResourcesDirectory)
-                copy.duplicatesStrategy = DuplicatesStrategy.FAIL
-                copy.archiveExtension.set(RESOURCES_ZIP_EXTENSION)
-            }
-            zipResourcesForPublication.configure {
-                it.from(copyTask)
-            }
+        val copyTask = compilation.assembleHierarchicalResources(
+            targetName,
+            resources,
+        )
+        val zippedResourcesDirectory = project.layout.buildDirectory.dir(
+            "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/zip-for-publication/${targetName}"
+        )
+        val zipResourcesForPublication = project.registerTask<Zip>(
+            "${targetName}ZipMultiplatformResourcesForPublication"
+        ) { copy ->
+            copy.destinationDirectory.set(zippedResourcesDirectory)
+            copy.duplicatesStrategy = DuplicatesStrategy.FAIL
+            copy.archiveExtension.set(RESOURCES_ZIP_EXTENSION)
+        }
+        zipResourcesForPublication.configure {
+            it.from(copyTask)
+        }
 
-            project.artifacts.add(
-                compilation.target.internal.resourcesElementsConfigurationName,
-                zipResourcesForPublication
-            ) { artifact ->
-                artifact.extension = RESOURCES_ZIP_EXTENSION
-                artifact.classifier = RESOURCES_CLASSIFIER
-                artifact.type = "zip"
-            }
+        project.artifacts.add(
+            compilation.target.internal.resourcesElementsConfigurationName,
+            zipResourcesForPublication
+        ) { artifact ->
+            artifact.extension = RESOURCES_ZIP_EXTENSION
+            artifact.classifier = RESOURCES_CLASSIFIER
+            artifact.type = "zip"
         }
     }
 
