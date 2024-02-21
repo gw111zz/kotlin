@@ -10,14 +10,16 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.awaitPlatformTargets
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -35,12 +37,13 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfigurationName: String
  */
 internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by extrasStoredProperty {
     assert(resolvableMetadataConfigurationName !in project.configurations.names)
-    val configuration = project.configurations.maybeCreateResolvable(resolvableMetadataConfigurationName)
+    val configuration = project.configurations
+        .maybeCreateResolvable(resolvableMetadataConfigurationName)
+        .configureMetadataDependenciesAttribute(project)
 
     withDependsOnClosure.forAll { sourceSet ->
-        configuration.extendsFrom(project.configurations.getByName(sourceSet.apiConfigurationName))
-        configuration.extendsFrom(project.configurations.getByName(sourceSet.implementationConfigurationName))
-        configuration.extendsFrom(project.configurations.getByName(sourceSet.compileOnlyConfigurationName))
+        val extenders = sourceSet.internal.compileDependenciesConfigurations
+        configuration.extendsFrom(*extenders.toTypedArray())
     }
 
     /**
@@ -50,25 +53,22 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
      */
     configuration.dependencies.addAllLater(project.listProvider {
         getVisibleSourceSetsFromAssociateCompilations(this).flatMap { sourceSet ->
-            project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies +
-                    project.configurations.getByName(sourceSet.implementationConfigurationName).allDependencies +
-                    project.configurations.getByName(sourceSet.compileOnlyConfigurationName).allDependencies
+            sourceSet.internal.compileDependenciesConfigurations.flatMap { it.allDependencies }
         }
     })
 
-    val allCompileMetadataConfiguration = project.allCompileMetadataConfiguration
-
-    /* Ensure consistent dependency resolution result within the whole module */
-    configuration.shouldResolveConsistentlyWith(allCompileMetadataConfiguration)
-    allCompileMetadataConfiguration.copyAttributesTo(
-        project,
-        dest = configuration
-    )
-
-    configureMetadataDependenciesConfigurations(configuration)
+    // needed for old IDEs
+    configureLegacyMetadataDependenciesConfigurations(configuration)
 
     configuration
 }
+
+private val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Configuration>
+    get() = listOf(
+        project.configurations.getByName(apiConfigurationName),
+        project.configurations.getByName(implementationConfigurationName),
+        project.configurations.getByName(compileOnlyConfigurationName),
+    )
 
 /**
 Older IDEs still rely on resolving the metadata configurations explicitly.
@@ -77,7 +77,7 @@ Dependencies will be coming from extending the newer 'resolvableMetadataConfigur
 the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
 relies on dependencies being added explicitly by the Kotlin Gradle Plugin
  */
-private fun InternalKotlinSourceSet.configureMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
+private fun InternalKotlinSourceSet.configureLegacyMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
     @Suppress("DEPRECATION")
     listOf(
         apiMetadataConfigurationName,
@@ -90,6 +90,12 @@ private fun InternalKotlinSourceSet.configureMetadataDependenciesConfigurations(
     }
 }
 
+private fun Configuration.configureMetadataDependenciesAttribute(project: Project): Configuration = apply {
+    usesPlatformOf(project.multiplatformExtension.metadata())
+    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+}
+
 /**
  * Configuration containing all compile dependencies from *all* source sets.
  * This configuration is used to provide a dependency 'consistency scope' for
@@ -97,20 +103,70 @@ private fun InternalKotlinSourceSet.configureMetadataDependenciesConfigurations(
  */
 private val Project.allCompileMetadataConfiguration
     get(): Configuration = configurations.findResolvable("allSourceSetsCompileDependenciesMetadata")
-        ?: configurations.createResolvable("allSourceSetsCompileDependenciesMetadata").also { configuration ->
-            configuration.usesPlatformOf(multiplatformExtension.metadata())
-            configuration.attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            configuration.attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-
-            kotlinExtension.sourceSets.all { sourceSet ->
-                configuration.extendsFrom(configurations.getByName(sourceSet.apiConfigurationName))
-                configuration.extendsFrom(configurations.getByName(sourceSet.implementationConfigurationName))
-                configuration.extendsFrom(configurations.getByName(sourceSet.compileOnlyConfigurationName))
-            }
-        }
+        ?: configurations
+            .createResolvable("allSourceSetsCompileDependenciesMetadata")
+            .configureMetadataDependenciesAttribute(project)
 
 private inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
     return project.objects.listProperty<T>().apply {
         set(project.provider(provider))
     }
+}
+
+/**
+ * Ensure a consistent dependencies resolution result between Metadata Dependencies and Actual platform dependencies
+ * TODO: explain why it is necessary
+ */
+internal val SetupConsistentMetadataDependenciesResolution = KotlinProjectSetupCoroutine {
+    KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
+
+    val platformTargets = multiplatformExtension.awaitPlatformTargets()
+    val mainSourceSets = platformTargets
+        .mapNotNull { target -> target.compilations.firstOrNull { KotlinSourceSetTree.orNull(it) == KotlinSourceSetTree.main } }
+        .flatMap { it.allKotlinSourceSets }
+        .toSet()
+    configureConsistentDependencyResolution(mainSourceSets, "allSourceSetsCompileDependenciesMetadata")
+
+    val testSourceSets = platformTargets
+        .mapNotNull { target -> target.compilations.firstOrNull { KotlinSourceSetTree.orNull(it) == KotlinSourceSetTree.test } }
+        .flatMap { it.allKotlinSourceSets }
+        .toSet()
+    configureConsistentDependencyResolution(testSourceSets, "allTestSourceSetsCompileDependenciesMetadata")
+
+//    val otherNonAndroidSourceSets = multiplatformExtension
+//        .awaitSourceSets()
+//        .filter { it.androidSourceSetInfoOrNull == null } // we don't care about android-specific source sets
+//    otherNonAndroidSourceSets.groupBy
+
+//    for (sourceSet in multiplatformExtension.sourceSets) {
+//        KotlinSourceSetTree
+//        // exclude android source sets, we don't want to mess with their dependencies
+//        if (sourceSet.androidSourceSetInfoOrNull != null) continue
+//
+//        val underlyingSourceSets = multiplatformExtension.findSourceSetsDependingOn(sourceSet)
+//        if (underlyingSourceSets.isEmpty()) continue
+//
+//        val constraintConfiguration = project.configurations.createResolvable(
+//            lowerCamelCaseName("kotlin", sourceSet.name, "compileDependenciesConstraints")
+//        )
+//        constraintConfiguration.description = """
+//            This is the internal Kotlin Gradle Plugin configuration! Do not modify or use it!
+//            This configuration contains all dependencies that will constraint compile dependencies of '${sourceSet.name}' source set.
+//        """.trimIndent()
+//        constraintConfiguration.configureMetadataDependenciesAttribute(project)
+//        val extenders = underlyingSourceSets.flatMap { it.internal.compileDependenciesConfigurations }
+//        constraintConfiguration.extendsFrom(*extenders.toTypedArray())
+//
+//        sourceSet.internal.resolvableMetadataConfiguration.shouldResolveConsistentlyWith(constraintConfiguration)
+//     }
+}
+
+private fun Project.configureConsistentDependencyResolution(groupOfSourceSets: Collection<KotlinSourceSet>, configurationName: String) {
+    if (groupOfSourceSets.isEmpty()) return
+    val configuration = configurations.createResolvable(configurationName)
+    configuration.configureMetadataDependenciesAttribute(project)
+    val allVisibleSourceSets = groupOfSourceSets + groupOfSourceSets.flatMap { getVisibleSourceSetsFromAssociateCompilations(it) }
+    val extenders = allVisibleSourceSets.flatMap { it.internal.compileDependenciesConfigurations }
+    configuration.extendsFrom(*extenders.toTypedArray())
+    groupOfSourceSets.forEach { it.internal.resolvableMetadataConfiguration.shouldResolveConsistentlyWith(configuration) }
 }
