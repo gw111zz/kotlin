@@ -1,9 +1,8 @@
-@file:OptIn(InternalKotlinGradlePluginApi::class)
+@file:OptIn(ComposeKotlinGradlePluginApi::class)
 
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import java.io.File
 
@@ -17,7 +16,7 @@ plugins {
 }
 
 kotlin {
-    val publication = if (<enablePublication>) kotlin.ext.get(
+    val publication = if (<enablePublication>) project.ext.get(
         KotlinTargetResourcesPublication.EXTENSION_NAME
     ) as KotlinTargetResourcesPublication else null
 
@@ -42,7 +41,7 @@ kotlin {
             target = target,
             resourcePathForSourceSet = { sourceSet ->
                 KotlinTargetResourcesPublication.ResourceRoot(
-                    absolutePath = sourceSetPathProvider(sourceSet),
+                    resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
                     includes = emptyList(),
                     excludes = emptyList(),
                 )
