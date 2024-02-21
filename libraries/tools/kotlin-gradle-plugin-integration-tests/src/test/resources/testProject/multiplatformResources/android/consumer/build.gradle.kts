@@ -1,7 +1,7 @@
-@file:OptIn(InternalKotlinGradlePluginApi::class)
+@file:OptIn(ComposeKotlinGradlePluginApi::class)
 
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
@@ -31,7 +31,7 @@ kotlin {
         }
     }
 
-    val publication = kotlin.ext.get(
+    val publication = project.ext.get(
         KotlinTargetResourcesPublication.EXTENSION_NAME
     ) as KotlinTargetResourcesPublication
 
@@ -53,7 +53,7 @@ kotlin {
             target = target,
             resourcePathForSourceSet = { sourceSet ->
                 KotlinTargetResourcesPublication.ResourceRoot(
-                    absolutePath = sourceSetPathProvider(sourceSet),
+                    resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
                     includes = emptyList(),
                     excludes = fontsFilter,
                 )
@@ -65,7 +65,7 @@ kotlin {
                 target = target,
                 resourcePathForSourceSet = { sourceSet ->
                     KotlinTargetResourcesPublication.ResourceRoot(
-                        absolutePath = sourceSetPathProvider(sourceSet),
+                        resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
                         includes = fontsFilter,
                         excludes = emptyList(),
                     )

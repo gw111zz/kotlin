@@ -46,7 +46,7 @@ kotlin {
             target = target,
             resourcePathForSourceSet = { sourceSet ->
                 KotlinTargetResourcesPublication.ResourceRoot(
-                    resourcesBaseDirectory = project.provider { project.file("src/${sourceSet.name}/multiplatformResources") },
+                    resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
                     includes = emptyList(),
                     excludes = fontsFilter,
                 )
@@ -58,7 +58,7 @@ kotlin {
                 target = target,
                 resourcePathForSourceSet = { sourceSet ->
                     KotlinTargetResourcesPublication.ResourceRoot(
-                        absolutePath = sourceSetPathProvider(sourceSet),
+                        resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
                         includes = fontsFilter,
                         excludes = emptyList(),
                     )
