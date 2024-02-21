@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.tooling.core.withClosureGroupingByDistance
 
-internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTask(
+internal fun KotlinCompilation<*>.assembleHierarchicalResources(
     targetNamePrefix: String,
-    resources: KotlinTargetResourcesPublication.TargetResources,
+    resources: KotlinTargetResourcesPublicationImpl.TargetResources,
 ): Provider<Directory> = registerAssembleHierarchicalResourcesTaskProvider(
     targetNamePrefix,
     resources,
 ).flatMap { it.outputDirectory }
 
-internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTaskProvider(
+internal fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesTaskProvider(
     targetNamePrefix: String,
-    resources: KotlinTargetResourcesPublication.TargetResources,
+    resources: KotlinTargetResourcesPublicationImpl.TargetResources,
 ): TaskProvider<AssembleHierarchicalResourcesTask> {
     val taskName = "${targetNamePrefix}CopyHierarchicalMultiplatformResources"
     val existingTask = project.tasks.locateTask<AssembleHierarchicalResourcesTask>(taskName)
@@ -35,34 +35,36 @@ internal suspend fun KotlinCompilation<*>.registerAssembleHierarchicalResourcesT
         return existingTask
     }
 
-    KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
-    val resourceDirectoriesByLevel = splitResourceDirectoriesBySourceSetLevel(
-        resources = resources,
-        rootSourceSets = kotlinSourceSets.sortedBy { it.name },
-    )
-    val outputDirectory = project.layout.buildDirectory.dir(
-        "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
-    )
-
-    return project.registerTask<AssembleHierarchicalResourcesTask>(taskName) { copy ->
-        resourceDirectoriesByLevel.forEach { level ->
-            copy.resourceDirectoriesByLevel.add(
-                level.map {
-                    AssembleHierarchicalResourcesTask.Resource(
-                        it.absolutePath,
-                        it.includes,
-                        it.excludes,
-                    )
-                }
+    return project.registerTask<AssembleHierarchicalResourcesTask>(taskName) { assembleResources ->
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges) {
+            val resourceDirectoriesByLevel = splitResourceDirectoriesBySourceSetLevel(
+                resources = resources,
+                rootSourceSets = kotlinSourceSets.sortedBy { it.name },
             )
+            val outputDirectory = project.layout.buildDirectory.dir(
+                "${KotlinTargetResourcesPublicationImpl.MULTIPLATFORM_RESOURCES_DIRECTORY}/assemble-hierarchically/${targetNamePrefix}"
+            )
+
+            resourceDirectoriesByLevel.forEach { level ->
+                assembleResources.resourceDirectoriesByLevel.add(
+                    level.map {
+                        AssembleHierarchicalResourcesTask.Resource(
+                            it.resourcesBaseDirectory,
+                            it.includes,
+                            it.excludes,
+                            project.layout,
+                        )
+                    }
+                )
+            }
+            assembleResources.relativeResourcePlacement.set(resources.relativeResourcePlacement)
+            assembleResources.outputDirectory.set(outputDirectory)
         }
-        copy.relativeResourcePlacement.set(resources.relativeResourcePlacement)
-        copy.outputDirectory.set(outputDirectory)
     }
 }
 
 private fun splitResourceDirectoriesBySourceSetLevel(
-    resources: KotlinTargetResourcesPublication.TargetResources,
+    resources: KotlinTargetResourcesPublicationImpl.TargetResources,
     rootSourceSets: List<KotlinSourceSet>,
 ): List<List<KotlinTargetResourcesPublication.ResourceRoot>> {
     return rootSourceSets.withClosureGroupingByDistance { it.dependsOn }.map { sourceSets ->

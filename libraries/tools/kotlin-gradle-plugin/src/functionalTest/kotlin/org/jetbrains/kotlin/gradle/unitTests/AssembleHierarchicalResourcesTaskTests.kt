@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.AssembleHierarchicalResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.registerAssembleHierarchicalResourcesTaskProvider
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -24,9 +25,11 @@ class AssembleHierarchicalResourcesTaskTests {
 
     @Test
     fun `test copying order - matches default target hierarchy`() {
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = project.multiplatformExtension
+        with(buildProjectWithMPP()) {
+            val kotlin = multiplatformExtension
             val compilation = kotlin.linuxArm64().compilations.getByName("main")
+
+            evaluate()
 
             assertEquals(
                 listOf(
@@ -44,13 +47,15 @@ class AssembleHierarchicalResourcesTaskTests {
 
     @Test
     fun `test copying order - with additional source sets in platform source set`() {
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = project.multiplatformExtension
+        with(buildProjectWithMPP()) {
+            val kotlin = multiplatformExtension
             val compilation = kotlin.jvm().compilations.getByName("main")
 
             val a = kotlin.sourceSets.create("a")
 
             compilation.defaultSourceSet.dependsOn(a)
+
+            evaluate()
 
             assertEquals(
                 listOf(
@@ -66,8 +71,8 @@ class AssembleHierarchicalResourcesTaskTests {
 
     @Test
     fun `test copying order - with source sets more remote than common`() {
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = project.multiplatformExtension
+        with(buildProjectWithMPP()) {
+            val kotlin = multiplatformExtension
             val compilation = kotlin.jvm().compilations.getByName("main")
 
             val a = kotlin.sourceSets.create("a")
@@ -81,6 +86,8 @@ class AssembleHierarchicalResourcesTaskTests {
             a.dependsOn(c)
             b.dependsOn(d)
             d.dependsOn(e)
+
+            evaluate()
 
             assertEquals(
                 listOf(
@@ -98,9 +105,11 @@ class AssembleHierarchicalResourcesTaskTests {
 
     @Test
     fun `test registering multiple resources assembling tasks - results in a diagnostic`() {
-        buildProjectWithMPP().runLifecycleAwareTest {
-            val kotlin = project.multiplatformExtension
+        with(buildProjectWithMPP()) {
+            val kotlin = multiplatformExtension
             val compilation = kotlin.jvm().compilations.getByName("main")
+
+            evaluate()
 
             registerFakeResourcesTask(compilation)
             registerFakeResourcesTask(compilation)
@@ -109,20 +118,20 @@ class AssembleHierarchicalResourcesTaskTests {
         }
     }
 
-    private suspend fun Project.resourceDirectoriesCopyingOrder(
+    private fun Project.resourceDirectoriesCopyingOrder(
         compilation: KotlinCompilation<*>,
     ): List<List<String>> {
         return registerFakeResourcesTask(compilation).get().resourceDirectoriesByLevel.get().map { resourcesLevel ->
             resourcesLevel.map { resource ->
-                resource.absolutePath.get().name
+                resource.resourcesBaseDirectory.get().name
             }
         }
     }
 
-    private suspend fun Project.registerFakeResourcesTask(compilation: KotlinCompilation<*>): TaskProvider<AssembleHierarchicalResourcesTask> {
+    private fun Project.registerFakeResourcesTask(compilation: KotlinCompilation<*>): TaskProvider<AssembleHierarchicalResourcesTask> {
         return compilation.registerAssembleHierarchicalResourcesTaskProvider(
             "test",
-            resources = KotlinTargetResourcesPublication.TargetResources(
+            resources = KotlinTargetResourcesPublicationImpl.TargetResources(
                 { ss ->
                     KotlinTargetResourcesPublication.ResourceRoot(
                         provider { File(ss.name) },

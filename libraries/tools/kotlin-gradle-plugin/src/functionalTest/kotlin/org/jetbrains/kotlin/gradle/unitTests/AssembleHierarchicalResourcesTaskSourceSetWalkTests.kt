@@ -224,15 +224,15 @@ class AssembleHierarchicalResourcesTaskSourceSetWalkTests {
     ): AssembleHierarchicalResourcesTask.SourceSetWalk.Result<List<Path>> {
         val fakeFs = buildFakeFileSystem(contents = fileSystem)
         return AssembleHierarchicalResourcesTask.SourceSetWalk<File, Path>(
-            fileSystem = object : AssembleHierarchicalResourcesTask.FileSystem {
-                override fun <T> walk(root: File, mapChildPath: (File) -> T): Sequence<T> = fakeFs.walkFileSystemFrom(root.toPath()).map {
-                    mapChildPath(it.path.toFile())
+            fileSystem = object : AssembleHierarchicalResourcesTask.FileSystem<File> {
+                override fun walk(root: File): Sequence<File> = fakeFs.walkFileSystemFrom(root.toPath()).map {
+                    it.path.toFile()
                 }
                 override fun exists(file: File): Boolean = fakeFs.exists(file.toPath())
                 override fun isDirectory(file: File): Boolean = fakeFs.fileSystemAt(file.toPath()) is FakeFileSystem.FakeDirectory
             },
-            pathFromResource = { it },
-            directoryToCopyFromResource = { it.toPath() }
+            basePathFromResource = { it },
+            fileTreeToCopyFromResource = { it.toPath() }
         ).directoriesToCopy(
             resourcesSplitByLevel.map { it.map { it.toFile() } },
         )
