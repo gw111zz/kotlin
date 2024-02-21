@@ -192,14 +192,12 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         aggregateResourcesTask: TaskProvider<AggregateResourcesTask>,
     ) {
         subscribeOnPublishResources(target) { resources ->
-            project.launch {
-                val copyResourcesTask = compilation.registerAssembleHierarchicalResourcesTask(
-                    target.disambiguateName("ResolveSelfResources"),
-                    resources,
-                )
-                aggregateResourcesTask.configure { aggregate ->
-                    aggregate.resourcesFromSelfDirectory.set(copyResourcesTask)
-                }
+            val copyResourcesTask = compilation.assembleHierarchicalResources(
+                target.disambiguateName("ResolveSelfResources"),
+                resources,
+            )
+            aggregateResourcesTask.configure { aggregate ->
+                aggregate.resourcesFromSelfDirectory.set(copyResourcesTask)
             }
         }
     }
