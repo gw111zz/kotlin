@@ -131,12 +131,12 @@ class Fir2IrLazyProperty(
                 field.initializer = toIrInitializer(initializer)
             }
         }
-        extensions.hasBackingField(fir, session) && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+        symbols.backingFieldSymbol != null && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
                 fir,
                 IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                symbols.backingFieldSymbol!!,
+                symbols.backingFieldSymbol,
                 components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
                 fir.name,
                 fir.isVal,
@@ -168,30 +168,32 @@ class Fir2IrLazyProperty(
         }.orEmpty()
     }
 
-    override var getter: IrSimpleFunction? = Fir2IrLazyPropertyAccessor(
-        components, startOffset, endOffset,
-        origin = when {
-            origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-            fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-            origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
-            origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-            fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-            else -> origin
-        },
-        firAccessor = fir.getter,
-        isSetter = false,
-        firParentProperty = fir,
-        firParentClass = containingClass,
-        symbol = symbols.getterSymbol,
-        parent = this@Fir2IrLazyProperty.parent,
-        isFakeOverride = isFakeOverride,
-        correspondingPropertySymbol = this.symbol
-    ).apply {
-        classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
+    override var getter: IrSimpleFunction? = symbols.getterSymbol?.let {
+        Fir2IrLazyPropertyAccessor(
+            components, startOffset, endOffset,
+            origin = when {
+                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
+                fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                else -> origin
+            },
+            firAccessor = fir.getter,
+            isSetter = false,
+            firParentProperty = fir,
+            firParentClass = containingClass,
+            symbol = it,
+            parent = this@Fir2IrLazyProperty.parent,
+            isFakeOverride = isFakeOverride,
+            correspondingPropertySymbol = this.symbol
+        ).apply {
+            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
+        }
     }
 
     override var setter: IrSimpleFunction? = run {
-        if (!fir.isVar) return@run null
+        if (!fir.isVar || symbols.setterSymbol == null) return@run null
         Fir2IrLazyPropertyAccessor(
             components, startOffset, endOffset,
             origin = when {
@@ -205,7 +207,7 @@ class Fir2IrLazyProperty(
             firAccessor = fir.setter, isSetter = true,
             firParentProperty = fir,
             firParentClass = containingClass,
-            symbol = symbols.setterSymbol!!,
+            symbol = symbols.setterSymbol,
             parent = this@Fir2IrLazyProperty.parent,
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
