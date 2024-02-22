@@ -222,12 +222,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("classReferencingOtherClassAsReturnType"))
     }
 
-    /**
-     * - IntIterator has unwanted 'hasNext' exposed
-     * - IntIterator's next method returns int32_t instead of expected Int *
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - classReferencingDependencyClassAsReturnType`() {
         doTest(headersTestDataDir.resolve("classReferencingDependencyClassAsReturnType"))
     }
@@ -309,6 +304,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - special function names`() {
         doTest(headersTestDataDir.resolve("specialFunctionNames"))
+    }
+
+    @Test
+    fun `test - multiple inheritance`() {
+        doTest(headersTestDataDir.resolve("multipleInheritance"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

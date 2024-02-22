@@ -32,7 +32,7 @@ context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtFunctionLikeSymbol.buildObjCMethod(
     unavailable: Boolean = false,
 ): ObjCMethod {
-    val bridge = getFunctionMethodBridge()
+    val bridge = getMethodBridge()
     val returnType: ObjCType = mapReturnType(bridge.returnBridge)
     val parameters = translateToObjCParameters(bridge)
     val selector = getSelector(bridge)
@@ -73,6 +73,15 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
         parameters = parameters,
         attributes = attributes
     )
+}
+
+/**
+ * Unlike constructor, a function can have base return type.
+ * So in case of function we need to find [baseMethod] and call [getFunctionMethodBridge] on it
+ */
+context(KtAnalysisSession, KtObjCExportSession)
+private fun KtFunctionLikeSymbol.getMethodBridge(): MethodBridge {
+    return if (this is KtFunctionSymbol) baseMethod.getFunctionMethodBridge() else getFunctionMethodBridge()
 }
 
 
