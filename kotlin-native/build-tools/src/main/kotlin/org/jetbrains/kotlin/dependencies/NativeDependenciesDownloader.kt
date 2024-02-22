@@ -43,9 +43,10 @@ abstract class NativeDependenciesDownloader : DefaultTask() {
     @get:Internal
     abstract val repositoryURL: Property<String>
 
+    private val platformManager = project.extensions.getByType<PlatformManager>()
+
     @TaskAction
     fun downloadAndExtract() {
-        val platformManager = project.extensions.getByType<PlatformManager>()
         val loader = platformManager.loader(target.get())
         check(loader is KonanPropertiesLoader)
         val dependencyProcessor =
@@ -57,7 +58,7 @@ abstract class NativeDependenciesDownloader : DefaultTask() {
                     // TODO: Consider using logger.
                     print("\nDownloading dependency for ${target.get()}: $url (${currentBytes}/${totalBytes}). ")
                 }
-        dependencyProcessor.showInfo = project.logger.isEnabled(LogLevel.INFO)
+        dependencyProcessor.showInfo = logger.isEnabled(LogLevel.INFO)
         dependencyProcessor.run()
     }
 }
