@@ -1,6 +1,6 @@
-CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any]
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public superTypes:[kotlin.Any]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public/*package*/ <> () returnType:<root>.J [primary]
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.J [primary]
   FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public
   FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 type:kotlin.Int visibility:public
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
