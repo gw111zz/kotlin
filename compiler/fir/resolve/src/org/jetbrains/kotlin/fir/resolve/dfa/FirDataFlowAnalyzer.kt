@@ -1346,11 +1346,8 @@ abstract class FirDataFlowAnalyzer(
     private var currentReceiverState: Flow? = null
 
 
-    fun setLastNodeAsCurrentsCallExplicitReceiver() {
-        val explicitReceiver = graphBuilder.lastNode
-        graphBuilder.getCurrentFunctionCallArgumentsExitNode()?.also {
-            it.explicitReceiver = explicitReceiver
-        }
+    fun exitCallExplicitReceiver() {
+        graphBuilder.exitCallExplicitReceiver()
     }
 
     private fun CFGNode<*>.buildDefaultFlow(

@@ -1498,16 +1498,24 @@ class ControlFlowGraphBuilder {
         return exitNode
     }
 
+    /**
+     * Saves the last node as the currents exit function arguments call
+     * explicit receiver.
+     *
+     * If either is null this function does nothing.
+     * There is no corresponding enterCall for this function.
+     */
+    fun exitCallExplicitReceiver() {
+        val exitNode = exitFunctionCallArgumentsNodes.topOrNull()
+        exitNode?.explicitReceiver = lastNode
+    }
+
     // -------------------------------------------------------------------------------------------------------------------------
 
     fun reset() {
         enterToLocalClassesMembers.clear()
         postponedLambdaExits.reset()
         lastNodes.reset()
-    }
-
-    fun getCurrentFunctionCallArgumentsExitNode(): FunctionCallArgumentsExitNode? {
-        return exitFunctionCallArgumentsNodes.topOrNull()
     }
 
 
