@@ -28,6 +28,7 @@ private enum class TestProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
+    EAGER_GROUP_CREATION("eagerGroupCreation"),
     TEAMCITY("teamcity");
 
     val fullName = "kotlin.internal.native.test.$shortName"

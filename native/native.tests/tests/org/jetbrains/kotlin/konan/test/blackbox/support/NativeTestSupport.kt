@@ -353,7 +353,14 @@ internal object NativeTestSupport {
             val enclosingTestClass = enclosingTestClass
 
             val testProcessSettings = getOrCreateTestProcessSettings()
-            val computedTestConfiguration = computeTestConfiguration(enclosingTestClass)
+            val computedTestConfiguration = if (TestGroupCreation.getFromProperty() == TestGroupCreation.EAGER) {
+                val annotation = UseEagerExtTestCaseGroupProvider()
+                val testConfiguration = annotation.annotationClass.findAnnotation<TestConfiguration>()
+                    ?: error("Unable to find annotation for Eager tes group creation")
+                ComputedTestConfiguration(testConfiguration, annotation)
+            } else {
+                computeTestConfiguration(enclosingTestClass)
+            }
 
             val settings = buildList {
                 // Put common settings:

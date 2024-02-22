@@ -296,6 +296,21 @@ internal enum class CompilerOutputInterceptor {
     NONE
 }
 
+internal enum class TestGroupCreation {
+    DEFAULT,
+    EAGER;
+
+    companion object {
+        private const val PROPERTY = "kotlin.internal.native.test.eagerGroupCreation"
+
+        fun getFromProperty(): TestGroupCreation = System.getProperty(PROPERTY)
+            ?.let {
+                if (it.toBoolean()) EAGER
+                else DEFAULT
+            } ?: DEFAULT
+    }
+}
+
 internal enum class BinaryLibraryKind {
     STATIC, DYNAMIC
 }
