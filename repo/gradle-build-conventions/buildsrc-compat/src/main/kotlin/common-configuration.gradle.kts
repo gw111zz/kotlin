@@ -132,9 +132,7 @@ fun Project.configureKotlinCompilationOptions() {
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
         val coreLibProjects: List<String> by rootProject.extra
-        val projectsWithForced19LanguageVersion = coreLibProjects + listOf(
-            ":kotlin-dom-api-compat",
-        ) - listOf(":kotlin-stdlib", ":kotlin-stdlib-common")
+        val projectsWithForced19LanguageVersion = emptyList<String>()
 
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
             kotlinOptions {

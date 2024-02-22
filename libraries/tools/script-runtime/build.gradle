@@ -31,5 +31,3 @@ compileKotlin {
     ]
     kotlinOptions.moduleName = project.name
 }
-
-LibrariesCommon.configureFrontendIr(project)
