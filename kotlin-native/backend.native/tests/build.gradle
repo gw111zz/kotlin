@@ -37,12 +37,7 @@ configurations {
     api.extendsFrom nopPluginApi
 }
 
-dependencies {
-    // TODO: upgrade coroutines to common version
-    api RepoDependencies.commonDependency(project, "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
-}
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
-
 ext.platformManager = project.project(":kotlin-native").platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
@@ -1419,7 +1414,7 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 }
 
 dependencies {
-    nopPluginApi kotlinCompilerModule
+//    nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")
     nopPluginApi project(":core:descriptors")
     nopPluginApi project(":compiler:ir.tree")
@@ -1433,7 +1428,7 @@ dependencies {
     nopPluginApi project(":kotlin-util-klib-metadata")
     nopPluginApi project(":compiler:ir.serialization.common")
 
-    implementation kotlinCompilerModule
+//    implementation kotlinCompilerModule
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     api libs.junit4
 }
