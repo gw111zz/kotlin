@@ -2215,6 +2215,14 @@ open class PsiRawFirBuilder(
             return buildAnonymousInitializer(initializer, containingDeclarationSymbol = null)
         }
 
+        /**
+         * Builds [FirAnonymousInitializer] from [KtAnonymousInitializer]
+         *
+         * @param initializer Source [KtAnonymousInitializer]
+         * @param containingDeclarationSymbol containing declaration symbol, if any
+         * @param allowLazyBody if `true`, [FirLazyBlock] is used in the IDE mode
+         * @param isLocal if `true`, the initializer is not used as a containing declaration for the contents of the initializer
+         */
         protected fun buildAnonymousInitializer(
             initializer: KtAnonymousInitializer,
             containingDeclarationSymbol: FirBasedSymbol<*>?,
