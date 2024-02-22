@@ -1,47 +1,36 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-//KT-65207
 
 // FILE: Java1.java
-public class Java1 {
+public class Java1 implements KotlinInterface {
+    @Override
     public <T> void foo(T a) { }
+    @Override
     public <T> T bar() {
         return null;
     }
 }
 
 // FILE: Java2.java
-public interface Java2  {
-    public <T> void foo(T a);
-    public <T> T bar();
-}
+public interface Java2 extends KotlinInterface { }
 
 // FILE: 1.kt
-class A : Java1(), Java2    //Kotlin ← Java1, Java2
+abstract class A : Java2    // Kotlin ← Java ← Kotlin
 
-class B : Java1(), Java2 {
-    override fun <T : Any?> bar(): T {
+class B : A() {
+    override fun <T> bar(): T {
         return null!!
     }
-
-    override fun <T : Any?> foo(a: T) { }
+    override fun <T> foo(a: T) { }
 }
 
-abstract class C : Java1(), KotlinInterface // Kotlin ← Java, Kotlin2
+class C : Java1()   //Kotlin ← Java(override) ← Kotlin
 
-class D : Java1(), KotlinInterface {
+class D : Java1() {
     override fun <T : Any?> bar(): T {
         return null!!
     }
-    override fun <T : Any?> foo(a: T) { }
-}
-
-class E : Java1(), Java2, KotlinInterface   // Kotlin ← Java1, Java2, Kotlin2
-
-class F : Java1(), Java2, KotlinInterface {
-    override fun <T : Any?> bar(): T {
-        return null!!
-    }
+    override fun <T> foo(a: T) { }
 }
 
 interface KotlinInterface {
@@ -49,10 +38,9 @@ interface KotlinInterface {
     fun <T> bar(): T
 }
 
-fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
-    val k: Int = a.bar<Int?>()
+fun test(a: A, b: B, c: C, d: D) {
+    val k: Int = a.bar<Int>()
     val k3: Any = a.bar()
-    val k4: Nothing = a.bar()
     a.foo(1)
     a.foo(null)
     a.foo<Int?>(null)
@@ -78,11 +66,4 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
     d.foo(null)
     d.foo<Int?>(null)
     d.foo(listOf(null))
-
-    val k11: Int? = e.bar<Int?>()
-    e.foo(1)
-    e.foo(null)
-
-    val k12: Any? = f.bar<Any?>()
-    f.foo(1)
 }

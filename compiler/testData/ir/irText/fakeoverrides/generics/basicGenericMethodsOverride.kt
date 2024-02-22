@@ -3,8 +3,6 @@
 // WITH_STDLIB
 
 // FILE: Java1.java
-import java.util.*;
-
 public class Java1 {
     public <T> void foo(T a) { }
     public <T> T bar() {
