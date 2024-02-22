@@ -111,6 +111,7 @@ class Fir2IrLazyProperty(
     }
 
     override var backingField: IrField? = when {
+        symbols.backingFieldSymbol == null -> null
         fir.hasExplicitBackingField -> {
             val backingFieldType = with(typeConverter) {
                 fir.backingField?.returnTypeRef?.toIrType()
@@ -121,7 +122,7 @@ class Fir2IrLazyProperty(
                 this@Fir2IrLazyProperty,
                 fir,
                 IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                symbols.backingFieldSymbol!!,
+                symbols.backingFieldSymbol,
                 components.visibilityConverter.convertToDescriptorVisibility(visibility),
                 fir.name,
                 fir.isVal,
@@ -131,43 +132,34 @@ class Fir2IrLazyProperty(
                 field.initializer = toIrInitializer(initializer)
             }
         }
-        symbols.backingFieldSymbol != null -> {
-            when {
-                fir.delegate != null -> {
-                    callablesGenerator.createBackingField(
-                        this@Fir2IrLazyProperty,
-                        fir,
-                        IrDeclarationOrigin.PROPERTY_DELEGATE,
-                        symbols.backingFieldSymbol,
-                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        NameUtils.propertyDelegateName(fir.name),
-                        true,
-                        fir.delegate
-                    )
-                }
-                origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
-                    callablesGenerator.createBackingField(
-                        this@Fir2IrLazyProperty,
-                        fir,
-                        IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                        symbols.backingFieldSymbol,
-                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        fir.name,
-                        fir.isVal,
-                        fir.initializer,
-                        type
-                    ).also { field ->
-                        field.initializer = toIrInitializer(fir.initializer)
-                    }
-                }
-                else -> {
-                    null
-                }
+        fir.delegate != null -> {
+            callablesGenerator.createBackingField(
+                this@Fir2IrLazyProperty,
+                fir,
+                IrDeclarationOrigin.PROPERTY_DELEGATE,
+                symbols.backingFieldSymbol,
+                components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                NameUtils.propertyDelegateName(fir.name),
+                true,
+                fir.delegate
+            )
+        }
+        origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+            callablesGenerator.createBackingField(
+                this@Fir2IrLazyProperty,
+                fir,
+                IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                symbols.backingFieldSymbol,
+                components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                fir.name,
+                fir.isVal,
+                fir.initializer,
+                type
+            ).also { field ->
+                field.initializer = toIrInitializer(fir.initializer)
             }
         }
-        else -> {
-            null
-        }
+        else -> null
     }?.apply {
         this.parent = this@Fir2IrLazyProperty.parent
         this.annotations = fir.backingField?.annotations?.mapNotNull {
